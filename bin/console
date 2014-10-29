@@ -1,0 +1,9 @@
+#! /bin/bash
+
+# API example to sanity test connection:
+# curl --insecure --cert ~/.boot2docker/certs/boot2docker-vm/cert.pem --key ~/.boot2docker/certs/boot2docker-vm/key.pem https://192.168.59.103:2376/images/json
+# docker run -it -v /Users/AmitAharoni/workspace/trusted-sandbox/tmp:/app/src my_runner /bin/bash
+# docker run -it -v /Users/AmitAharoni/workspace/trusted-sandbox/tmp/code_dirs/10006:/app/src runner5 10006
+# docker run -it -v /Users/AmitAharoni/workspace/trusted-sandbox/tmp/code_dirs/10006:/app/src --entrypoint=/bin/bash runner5
+
+PRYRC=bin/initializer.rb bundle exec pry

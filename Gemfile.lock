@@ -1,0 +1,24 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    archive-tar-minitar (0.5.2)
+    coderay (1.1.0)
+    docker-api (1.13.6)
+      archive-tar-minitar
+      excon (>= 0.38.0)
+      json
+    excon (0.40.0)
+    json (1.8.1)
+    method_source (0.8.2)
+    pry (0.10.1)
+      coderay (~> 1.1.0)
+      method_source (~> 0.8.1)
+      slop (~> 3.4)
+    slop (3.6.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  docker-api
+  pry
