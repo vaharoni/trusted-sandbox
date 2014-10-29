@@ -70,10 +70,7 @@ $ docker run --rm vaharoni/trusted_sandbox:2.1.2.v1
 ```
 If you see the message "you must provide a uid", then you are set.
 
-If you receive an error that looks like this:
-```
-Error response from daemon: Cannot start container 9f3bd8d72f0704980cedacc068261c38e280e7314916245550a6d48431ea8f11: fork/exec /var/lib/docker/init/dockerinit-1.0.1: cannot allocate memory
-```
+If you receive an error that looks like this: `Error response from daemon: Cannot start container 9f3bd8d72f0704980cedacc068261c38e280e7314916245550a6d48431ea8f11: fork/exec /var/lib/docker/init/dockerinit-1.0.1: cannot allocate memory`
 consider restarting docker:
 ```
 $ sudo service docker.io restart
@@ -91,42 +88,49 @@ Let's go over the sections of the YAML configuration file you created in step 1 
 
 ### Docker access
 ```ruby
-  docker_url:                   https://192.168.59.103:2376              # ENV['DOCKER_HOST'] is used if omitted
-  docker_cert_path:             ~/.boot2docker/certs/boot2docker-vm      # ENV['DOCKER_CERT_PATH'] is used if omitted
+  # ENV['DOCKER_HOST'] is used if omitted
+  docker_url: https://192.168.59.103:2376
 
-  docker_image_name:            vaharoni/trusted_sandbox:2.1.2.v1
+  # ENV['DOCKER_CERT_PATH'] is used if omitted
+  docker_cert_path: ~/.boot2docker/certs/boot2docker-vm
+
+  docker_image_name: vaharoni/trusted_sandbox:2.1.2.v1
 
   # Optional authentication
   docker_login:
-    user:                       my_user
-    password:                   my_password
-    email:                      email@email.com
+    user: my_user
+    password: my_password
+    email: email@email.com
 
 ```
 
-Trusted Sandbox uses the `docker-api` gem to communicate with docker. All the parameters above are used to setup
+Trusted Sandbox uses the `docker-api` gem to communicate with docker. Some of the parameters above are used to setup
 the global `Docker` class. For finer control of its configuration, you can add a `docker_options` hash entry to the
 YAML file which will override any configuration and passed through to `Docker.options`.
 
 ### Limiting resources
+CPU:
 ```ruby
-  # CPU
-  cpu_shares:        1
-
-  # Memory
-  memory_limit:      52_428_800            # In bytes
+  cpu_shares:        1              # In relative units
+```
+Memory:
+```ruby
+  memory_limit:      52_428_800     # In bytes
   enable_swap_limit: false
-  memory_swap_limit: 52_428_800            # In bytes. Relevant only if enable_swap_limit is true.
-
-  # Execution
-  execution_timeout: 15                    # In seconds
+  memory_swap_limit: 52_428_800     # In bytes. Relevant only if enable_swap_limit is true.
+```
+Execution
+```ruby
+  execution_timeout: 15             # In seconds
   network_access:    false
-
-  # Quotas
+```
+Quotas
+```ruby
   enable_quotas:     false
-
-  # Settings for UID-pool used for assigning user quotas. Always used, even if quota functionality is disabled.
-  # It's very unlikely you'll need to touch these.
+```
+Settings for UID-pool used for assigning user quotas. Always used, even if quota functionality is disabled.
+It's very unlikely you'll need to touch these.
+```ruby
   pool_size:         5000
   pool_min_uid:      20000
   pool_timeout:      3
@@ -158,13 +162,18 @@ A directory used by the UID-pool to handle locks.
 ### Limiting swap memory
 
 In order to limit swap memory, you'll need to set up your host server to allow that.
-The following should work for Debian / Ubuntu:
+The following should work for Debian / Ubuntu.
+
+First, run:
 ```
 $ sudoedit /etc/default/grub
-
-# Edit the following line
+```
+and edit the following line:
+```
 GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"
-
+```
+Then run:
+```
 $ sudo update-grub
 ```
 Reboot the server, and you should be set. Read more about it [here][2].
@@ -185,18 +194,21 @@ $ sudo apt-get install quota
 And follow [these instructions][4], which are also brought here for completeness:
 ```
 $ sudo vim /etc/fstab
-
-# Add ,usrquota in the end of column no. 4 so it looks something like:
-# LABEL=cloudimg-rootfs   /        ext4   defaults,discard,usrquota       0 0
-
+```
+Add `,usrquota` in the end of column no. 4 so it looks something like:
+```
+LABEL=cloudimg-rootfs   /        ext4   defaults,discard,usrquota       0 0
+```
+Then do:
+```
 $ mount -o remount
 ```
-Then reboot the server, and run the following (quota is in KB):
+and reboot the server. Finally, run the following (quota is in KB):
 ```
 $ trusted_sandbox set_quotas 10000
 ```
 This sets ~10MB quota on all UIDs that are in the range defined by `pool_size` and `pool_min_uid` parameters. If you
-change these configuration parameters you must rerun the command.
+change these configuration parameters you must rerun the `set_quotas` command.
 
 Remember to set `enable_quotas: true` in the YAML file.
 
@@ -221,9 +233,9 @@ A less trivial example:
 ```ruby
 # my_function.rb
 
-# Example for requiring a gem, assuming it is in the Gemfile of both the container and the host.
-# If you want to access a gem that is only available to the container, put the require directive inside
-# `initialize` or `run` methods.
+# Example for requiring a gem, assuming it is in the Gemfile of both the container and the
+# host. If you want to access a gem that is only available to the container, put the require
+#  directive inside `initialize` or `run` methods.
 require 'hashie/mash'
 
 class MyFunction
