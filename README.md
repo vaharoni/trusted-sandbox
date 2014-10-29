@@ -20,7 +20,8 @@ class MyFunction
     eval @user_code
   end
 end
-
+```
+```ruby
 # somewhere_else.rb
 
 untrusted_code = "input[:number] ** 2"
@@ -195,7 +196,7 @@ end
 
 The class you send to a container can be as elaborate as you want, providing a context of execution for the user code.
 When you call `run` or `run!` with a class constant, the file where that class is defined is copied to the
-/home/sandbox/src folder inside the container. Any arguments needed to instantiate an object from that class are
+`/home/sandbox/src` folder inside the container. Any arguments needed to instantiate an object from that class are
 serialized. When the container starts, it deserializes these arguments, invokes the `new` method with them, and runs
 `run` on the instantiated object. The output of that method is then serialized back to the host.
 
@@ -237,7 +238,8 @@ class MyFunction
     end
   end
 end
-
+```
+```ruby
 # Somewhere else
 a, b = TrustedSandbox.run! MyFunction, "a + b", "x ** 2", 2, 5
 # => 49
