@@ -4,4 +4,4 @@ tmp/
 .swp
 config/trusted_sandbox.yml
 trusted_sandbox.yml
-server_images/
+trusted_sandbox_images/

@@ -346,15 +346,15 @@ Trusted Sandbox comes with one ready-to-use image that includes Ruby 2.1.2. It i
 To use a different image from your Docker Hub account simply change the configuration parameters in the YAML file.
 
 To customize the provided images, run the following. It will copy the image definition to your current directory under
-`server_images/2.1.2`.
+`trusted_sandbox_images/2.1.2`.
 ```
 $ trusted_sandbox generate_image
 ```
 
 After modifying the files to your satisfaction, you can either push it to your Docker Hub account, or build directly
-on the server. Assuming you kept the image under server_image/2.1.2:
+on the server. Assuming you kept the image under trusted_sandbox_images/2.1.2:
 ```
-$ docker build -t "your_user/your_image_name:your_image_version" server_images/2.1.2
+$ docker build -t "your_user/your_image_name:your_image_version" trusted_sandbox_images/2.1.2
 ```
 
 ## Troubleshooting
