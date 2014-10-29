@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'trusted_sandbox/cli'
+TrustedSandbox::Cli.start(ARGV)

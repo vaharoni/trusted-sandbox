@@ -4,14 +4,12 @@ require 'trusted_sandbox'
 
 desc 'Builds Docker image 1.9.3'
 task :build_193 do
-  TrustedSandbox.config
-  image = Docker::Image.build_from_dir('lib/trusted_sandbox/server_images/1.9.3')
-  image.tag repo: 'trusted_sandbox', tag: '1.9.3.v1'
+  docker_env = "DOCKER_HOST=#{ENV['DOCKER_HOST'] || TrustedSandbox.config.docker_url} DOCKER_CERT_PATH=#{ENV['DOCKER_CERT_PATH'] || TrustedSandbox.config.docker_cert_path} DOCKER_TLS_VERIFY=#{ENV['DOCKER_TLS_VERIFY'] || 1}"
+  `#{docker_env} docker build -t "trusted_sandbox:1.9.3.v1" lib/trusted_sandbox/server_images/1.9.3`
 end
 
 desc 'Builds Docker image 2.1.2'
 task :build_212 do
-  TrustedSandbox.config
-  image = Docker::Image.build_from_dir('lib/trusted_sandbox/server_images/2.1.2')
-  image.tag repo: 'trusted_sandbox', tag: '2.1.2.v1'
+  docker_env = "DOCKER_HOST=#{ENV['DOCKER_HOST'] || TrustedSandbox.config.docker_url} DOCKER_CERT_PATH=#{ENV['DOCKER_CERT_PATH'] || TrustedSandbox.config.docker_cert_path} DOCKER_TLS_VERIFY=#{ENV['DOCKER_TLS_VERIFY'] || 1}"
+  `#{docker_env} docker build -t "trusted_sandbox:2.1.2.v1" lib/trusted_sandbox/server_images/2.1.2`
 end
