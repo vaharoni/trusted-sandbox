@@ -31,7 +31,10 @@ module TrustedSandbox
 
     desc 'set_quotas QUOTA_KB', 'Sets the quota for all the UIDs in the pool. This requires additional installation. Refer to the README file.'
     def set_quotas(quota_kb)
-      (TrustedSandbox.config.pool_min_uid..TrustedSandbox.config.pool_max_uid).each do |uid|
+      from = TrustedSandbox.config.pool_min_uid
+      to = TrustedSandbox.config.pool_max_uid
+      puts "Configuring quota for UIDs [#{from}..#{to}]"
+      (from..to).each do |uid|
         `setquota -u #{uid} 0 #{quota_kb} 0 0 /`
       end
     end
