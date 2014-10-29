@@ -1,8 +1,3 @@
-# require 'docker'
-# require_relative '../lib/trusted_sandbox'
-# require_relative '../app/user_function'
-#
-
 require 'trusted_sandbox'
 TrustedSandbox.config do |c|
   c.docker_url = 'https://192.168.59.103:2376'

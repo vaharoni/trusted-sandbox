@@ -1,3 +1,4 @@
+require 'docker'
 require 'trusted_sandbox/api'
 require 'trusted_sandbox/config'
 require 'trusted_sandbox/defaults'
