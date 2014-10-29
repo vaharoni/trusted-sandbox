@@ -94,9 +94,7 @@ Let's go over the sections of the YAML configuration file you created in step 1 
   docker_url:                   https://192.168.59.103:2376              # ENV['DOCKER_HOST'] is used if omitted
   docker_cert_path:             ~/.boot2docker/certs/boot2docker-vm      # ENV['DOCKER_CERT_PATH'] is used if omitted
 
-  docker_image_user             vaharoni
-  docker_image_repo:            trusted_sandbox
-  docker_image_tag:             2.1.2.v1
+  docker_image_name:            vaharoni/trusted_sandbox:2.1.2.v1
 
   # Optional authentication
   docker_login:
@@ -137,7 +135,7 @@ YAML file which will override any configuration and passed through to `Docker.op
 ```
 Note that controlling memory swap limits and user quotas requires additional steps as outlined below.
 
-### Execution configuration parameters
+### Execution parameters
 
 A temporary directory under which sub directories are created and mounted to containers.
 The code and args exchange between the host and containers is done via these sub directories.
@@ -173,6 +171,8 @@ Reboot the server, and you should be set. Read more about it [here][2].
 Remember to set `enable_swap_limit: true` in the YAML file.
 
 ### Limiting user quotas
+
+Note: due to permission setting scheme, limiting user quota does not work on OS or Windows.
 
 In order to control quotas we follow the technique suggested by [Harry Marr][3]. It makes use of the fact that
 UIDs (user IDs) and GIDs (Group IDs) are shared between the host and its containers. When a container starts, we

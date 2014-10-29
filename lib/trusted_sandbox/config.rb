@@ -27,20 +27,18 @@ module TrustedSandbox
     end
 
     attr_accessor_with_fallback :pool_size, :pool_min_uid, :pool_timeout, :pool_retries, :pool_delay, :docker_options,
-                                :docker_image_user, :docker_image_repo, :docker_image_tag,
-                                :memory_limit, :memory_swap_limit, :cpu_shares,
+                                :memory_limit, :memory_swap_limit, :cpu_shares, :docker_image_name,
                                 :execution_timeout, :network_access, :enable_swap_limit, :enable_quotas,
-                                :host_code_root_path, :container_code_path, :container_input_filename, :container_output_filename,
-                                :keep_code_folders, :host_uid_pool_lock_path
+                                :container_code_path, :container_input_filename, :container_output_filename,
+                                :keep_code_folders
 
-    attr_reader :docker_url, :docker_cert_path
+    attr_reader_with_fallback :host_code_root_path, :host_uid_pool_lock_path
+
+    attr_reader :docker_url, :docker_cert_path, :docker_auth_email, :docker_auth_user, :docker_auth_password,
+                :docker_auth_needed
 
     def override(params={})
       Config.send :new, self, params
-    end
-
-    def docker_image_name
-      "#{docker_image_user}/#{docker_image_repo}:#{docker_image_tag}"
     end
 
     def pool_max_uid
@@ -61,15 +59,32 @@ module TrustedSandbox
       }.merge(docker_options)
     end
 
+    def host_code_root_path=(path)
+      @host_code_root_path = File.expand_path(path)
+    end
+
+    def host_uid_pool_lock_path=(path)
+      @host_uid_pool_lock_path = File.expand_path(path)
+    end
+
     # All keys are mandatory
     # @option :user [String]
     # @option :password [String]
     # @option :email [String]
-    def docker_login(options={})
-      user = options[:user] || options['user']
-      password = options[:password] || options['password']
-      email = options[:email] || options['email']
-      Docker.authenticate! username: user, password: password, email: email
+    def docker_login=(options={})
+      @docker_auth_needed = true
+      @docker_auth_user = options[:user] || options['user']
+      @docker_auth_password = options[:password] || options['password']
+      @docker_auth_email = options[:email] || options['email']
+    end
+
+    # Called to do any necessary setup to allow staged configuration
+    # @return [Config] self for chaining
+    def finished_configuring
+      return self unless @docker_auth_needed
+      Docker.authenticate! username: @docker_auth_user, password: @docker_auth_password, email: @docker_auth_email
+      @docker_auth_needed = false
+      self
     end
 
     private_class_method :new

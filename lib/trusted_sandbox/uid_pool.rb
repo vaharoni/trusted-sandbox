@@ -35,8 +35,8 @@ module TrustedSandbox
     # @option retries [Integer] number of attempts to retry to acquire a uid
     # @option delay [Float] delay between retries
     def initialize(lock_dir, lower, upper, timeout: nil, retries: nil, delay: nil)
-      @lock_dir = File.expand_path(lock_dir)
-      FileUtils.mkdir_p(@lock_dir)
+      @lock_dir = lock_dir
+      FileUtils.mkdir_p(lock_dir)
 
       @master_lock_file = lock_file_path_for('master')
       @lower = lower
@@ -47,7 +47,7 @@ module TrustedSandbox
     end
 
     def inspect
-      "#<TrustedSandbox::UidPool used: #{used}, available: #{available}, used_uids: #{used_uids}, available_uids: #{available_uids}>"
+      "#<TrustedSandbox::UidPool used: #{used}, available: #{available}, used_uids: #{used_uids}>"
     end
 
     # @return [Integer]

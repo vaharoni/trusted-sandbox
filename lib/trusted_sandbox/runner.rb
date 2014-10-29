@@ -81,13 +81,12 @@ module TrustedSandbox
     end
 
     def create_container_request
-      {
+      basic_request = {
           # 'Hostname' => '',
           # 'Domainname' => '',
           # 'User' => '',
-          'Memory' => config.memory_limit,
-          'MemorySwap' => config.memory_swap_limit,
           'CpuShares' => config.cpu_shares,
+          'Memory' => config.memory_limit,
           # 'Cpuset' => '0,1',
           'AttachStdin' => false,
           'AttachStdout' => true,
@@ -96,18 +95,20 @@ module TrustedSandbox
           'Tty' => false,
           'OpenStdin' => false,
           'StdinOnce' => false,
-          # 'Env' => null,
           'Cmd' => [@uid.to_s],
           'Image' => config.docker_image_name,
           'Volumes' => {
               config.container_code_path => {}
           },
           # 'WorkingDir' => '',
-          'NetworkDisabled' => config.network_access,
+          'NetworkDisabled' => !config.network_access,
           # 'ExposedPorts' => {
           #     '22/tcp' => {}
           # }
       }
+      basic_request.merge!('MemorySwap' => config.memory_swap_limit) if config.enable_swap_limit
+      basic_request.merge!('Env' => ['USE_QUOTAS=1']) if config.enable_quotas
+      basic_request
     end
 
     def start_container_request
