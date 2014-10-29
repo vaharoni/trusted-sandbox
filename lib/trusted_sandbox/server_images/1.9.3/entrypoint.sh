@@ -1,7 +1,6 @@
 uid=$1
 
 if [ -z $uid ]; then
-  #  uid=10000
   echo "you must provide a uid"
   exit 1
 fi

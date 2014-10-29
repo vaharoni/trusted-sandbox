@@ -1,3 +1,4 @@
+require 'yaml'
 require 'docker'
 require 'trusted_sandbox/api'
 require 'trusted_sandbox/config'
@@ -18,9 +19,17 @@ module TrustedSandbox
   #     # ...
   #   end
   def self.config
-    @config ||= Defaults.send(:new).override
+      @config ||= Defaults.send(:new).override config_overrides_from_file
     yield @config if block_given?
     @config
+  end
+
+  def self.config_overrides_from_file(env = nil)
+    yaml_path = %w(trusted_sandbox.yml config/trusted_sandbox.yml).find {|x| File.exist?(x)}
+    return {} unless yaml_path
+
+    env ||= ENV['RAILS_ENV'] || ENV['TRUSTED_SANDBOX_ENV'] || 'development'
+    YAML.load_file(yaml_path)[env]
   end
 
   def self.uid_pool

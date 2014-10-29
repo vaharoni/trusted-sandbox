@@ -1,0 +1,22 @@
+development:
+  docker_url:                   https://192.168.59.103:2376
+  docker_cert_path:             ~/.boot2docker/certs/boot2docker-vm
+
+  docker_image_repo:            trusted_sandbox
+  docker_image_tag:             1.9.3
+
+  memory_limit:                 52_428_800            # 50 MB
+  memory_swap_limit:            52_428_800            # 50 MB
+  cpu_shares:                   1
+  execution_timeout:            15
+  network_access:               false
+  enable_swap_limit:            false
+  enable_quotas:                false
+  host_code_root_path:          tmp/code_dirs
+  keep_code_folders:            false
+
+  pool_size:                    5000
+  pool_min_uid:                 20000
+  pool_timeout:                 3
+  pool_retries:                 5
+  pool_delay:                   0.5

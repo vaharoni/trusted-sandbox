@@ -52,10 +52,10 @@ module TrustedSandbox
     end
 
     def docker_cert_path=(value)
-      @docker_cert_path = value
+      @docker_cert_path = File.expand_path(value)
       Docker.options = {
-        private_key_path: "#{value}/key.pem",
-        certificate_path: "#{value}/cert.pem",
+        private_key_path: "#{@docker_cert_path}/key.pem",
+        certificate_path: "#{@docker_cert_path}/cert.pem",
         ssl_verify_peer: false
       }.merge(docker_options)
     end

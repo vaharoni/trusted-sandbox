@@ -23,6 +23,8 @@ end
 ```
 ```ruby
 # somewhere_else.rb
+require 'trusted_sandbox'
+require 'lib/my_function'
 
 untrusted_code = "input[:number] ** 2"
 

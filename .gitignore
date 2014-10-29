@@ -2,3 +2,4 @@
 .DS_Store
 tmp/
 .swp
+config/trusted_sandbox.yml
