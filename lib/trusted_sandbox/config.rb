@@ -27,10 +27,11 @@ module TrustedSandbox
     end
 
     attr_accessor_with_fallback :pool_size, :pool_min_uid, :pool_timeout, :pool_retries, :pool_delay, :docker_options,
-                                :docker_image_repo, :docker_image_tag, :memory_limit, :memory_swap_limit, :cpu_shares,
+                                :docker_image_user, :docker_image_repo, :docker_image_tag,
+                                :memory_limit, :memory_swap_limit, :cpu_shares,
                                 :execution_timeout, :network_access, :enable_swap_limit, :enable_quotas,
                                 :host_code_root_path, :container_code_path, :container_input_filename, :container_output_filename,
-                                :keep_code_folders
+                                :keep_code_folders, :host_uid_pool_lock_path
 
     attr_reader :docker_url, :docker_cert_path
 
@@ -39,7 +40,7 @@ module TrustedSandbox
     end
 
     def docker_image_name
-      [docker_image_repo, docker_image_tag].join(':')
+      "#{docker_image_user}/#{docker_image_repo}:#{docker_image_tag}"
     end
 
     def pool_max_uid

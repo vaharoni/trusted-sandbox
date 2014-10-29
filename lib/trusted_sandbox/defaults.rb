@@ -4,7 +4,7 @@ module TrustedSandbox
     def initialize
       self.docker_options = {}
       self.docker_image_repo = 'trusted_sandbox'
-      self.docker_image_tag = '1.9.3'
+      self.docker_image_tag = '2.1.2.v1'
       self.memory_limit = 50 * 1024 * 1024
       self.memory_swap_limit = 50 * 1024 * 1024
       self.cpu_shares = 1
@@ -13,6 +13,7 @@ module TrustedSandbox
       self.enable_swap_limit = false
       self.enable_quotas = false
       self.host_code_root_path = 'tmp/code_dirs'
+      self.host_uid_pool_lock_path = 'tmp/uid_pool_lock'
 
       self.docker_url = ENV['DOCKER_HOST']
       self.docker_cert_path = ENV['DOCKER_CERT_PATH']

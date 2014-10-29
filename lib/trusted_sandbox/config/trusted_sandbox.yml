@@ -1,18 +1,29 @@
 development:
+  docker_login:
+    user:                       my_user
+    password:                   my_password
+    email:                      email@email.com
+
   docker_url:                   https://192.168.59.103:2376
   docker_cert_path:             ~/.boot2docker/certs/boot2docker-vm
 
+  docker_image_user:            vaharoni
   docker_image_repo:            trusted_sandbox
-  docker_image_tag:             1.9.3
+  docker_image_tag:             2.1.2.v1
+
+  cpu_shares:                   1
 
   memory_limit:                 52_428_800            # 50 MB
+  enable_swap_limit:            false
   memory_swap_limit:            52_428_800            # 50 MB
-  cpu_shares:                   1
+
   execution_timeout:            15
   network_access:               false
-  enable_swap_limit:            false
+
   enable_quotas:                false
+
   host_code_root_path:          tmp/code_dirs
+  host_uid_pool_lock_path:      tmp/uid_pool_lock
   keep_code_folders:            false
 
   pool_size:                    5000

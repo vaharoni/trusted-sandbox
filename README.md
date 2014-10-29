@@ -41,7 +41,7 @@ arguments sent to #initialize, loads the container, instantiates an object, and 
 ### Step 1
 Add this line to your application's Gemfile:
 ```
-gem 'trusted_sandbox'
+gem 'trusted-sandbox'
 ```
 
 And then execute:
@@ -53,67 +53,109 @@ Or install it yourself as:
 $ gem install trusted-sandbox
 ```
 
+Then, run the following command which will copy the `trusted_sandbox.yml` file into your current directory, or
+`config` directory if it exists:
+```
+$ trusted_sandbox install
+```
+
 ### Step 2
 Install Docker. Refer to the Docker documentation to see how to install Docker on your environment.
 
-### Step 3 (optional)
-Run:
+### Step 3
+Install the image. This step is optional, as Docker automatically installs images when you first run them. However,
+since it takes a few minutes we suggest you do this in advance.
 ```
-$ rake trusted_sandbox:install_image
+$ docker run --rm vaharoni/trusted_sandbox:2.1.2.v1
 ```
-which by default installs the 1.9.3 Ruby image on the server. You can override it by following the guidelines in
-"Configuring rake tasks" section, or using `IMAGE_NAME` environment variable:
+If you see the message "you must provide a uid", then you are set.
+
+If you receive an error that looks like this:
 ```
-$ IMAGE_NAME="my_user/my_image_repo:my_image_version" rake trusted_sandbox:install_image
+Error response from daemon: Cannot start container 9f3bd8d72f0704980cedacc068261c38e280e7314916245550a6d48431ea8f11: fork/exec /var/lib/docker/init/dockerinit-1.0.1: cannot allocate memory
 ```
-If you don't run this rake command, Docker will automatically install the image the first time you use Trusted
-Sandbox - a process that may take a few minutes.
+consider restarting docker:
+```
+$ sudo service docker.io restart
+```
+and then try again.
 
 ### Step 4
+
 If you'd like to limit swap memory or set user quotas you'll have to install additional programs on your server.
 Follow the instructions in the relevant sections of the configuration guide.
 
 ## Configuring Trusted Sandbox
 
+Let's go over the sections of the YAML configuration file you created in step 1 above.
+
 ### Docker access
 ```ruby
-TrustedSandbox.config do |c|
-  c.docker_url = 'https://192.168.59.103:2376'                                  # Default is ENV['DOCKER_HOST']
-  c.docker_cert_path = File.expand_path('~/.boot2docker/certs/boot2docker-vm')  # Default is ENV['DOCKER_CERT_PATH']
-  c.docker_image_repo = 'my_docker_repo'                                        # Default is 'vaharoni/trusted_sandbox'
-  c.docker_image_tag = 'v2'                                                     # Default is 'latest'
+  docker_url:                   https://192.168.59.103:2376              # ENV['DOCKER_HOST'] is used if omitted
+  docker_cert_path:             ~/.boot2docker/certs/boot2docker-vm      # ENV['DOCKER_CERT_PATH'] is used if omitted
+
+  docker_image_user             vaharoni
+  docker_image_repo:            trusted_sandbox
+  docker_image_tag:             2.1.2.v1
 
   # Optional authentication
-  c.docker_login user: 'my_user', password: 'password', email: 'user@email.com'
-end
+  docker_login:
+    user:                       my_user
+    password:                   my_password
+    email:                      email@email.com
+
 ```
 
 Trusted Sandbox uses the `docker-api` gem to communicate with docker. All the parameters above are used to setup
-the global `Docker` class. For finer control of its configuration, you can set `c.docker_options = {...}`, which
-will override any configuration and passed through to `Docker.options`.
+the global `Docker` class. For finer control of its configuration, you can add a `docker_options` hash entry to the
+YAML file which will override any configuration and passed through to `Docker.options`.
 
 ### Limiting resources
 ```ruby
-TrustedSandbox.config do |c|
   # CPU
-  c.cpu_shares = 1                            # Relative units. Default is 1
+  cpu_shares:        1
 
   # Memory
-  c.memory_limit = 50 * 1024 * 1024           # In bytes. Default is 50MB
-  c.enable_swap_limit = true                  # Default is false. See swap memory section.
-  c.memory_swap_limit = 50 * 1024 * 1024      # In bytes. Default is 50MB, though enable_swap_limit is false by default.
+  memory_limit:      52_428_800            # In bytes
+  enable_swap_limit: false
+  memory_swap_limit: 52_428_800            # In bytes. Relevant only if enable_swap_limit is true.
 
   # Execution
-  c.execution_timeout = 10                    # In seconds. Default is 15 seconds
-  c.network_access = false                    # Default is false
+  execution_timeout: 15                    # In seconds
+  network_access:    false
 
   # Quotas
-  c.enable_quotas = true                      # Default is false. See user quotas section.
-  c.host_code_root_path = '/my/path'          # Parent folder to hold mounted directories to where code is copied.
-                                              # Default is './tmp/code_dirs'
-end
+  enable_quotas:     false
+
+  # Settings for UID-pool used for assigning user quotas. Always used, even if quota functionality is disabled.
+  # It's very unlikely you'll need to touch these.
+  pool_size:         5000
+  pool_min_uid:      20000
+  pool_timeout:      3
+  pool_retries:      5
+  pool_delay:        0.5
 ```
 Note that controlling memory swap limits and user quotas requires additional steps as outlined below.
+
+### Execution configuration parameters
+
+A temporary directory under which sub directories are created and mounted to containers.
+The code and args exchange between the host and containers is done via these sub directories.
+
+```ruby
+  host_code_root_path: tmp/code_dirs
+```
+
+When set to true, the temporary sub directories will not be erased. This allows you to login to the container to
+troubleshoot issues as explained in the "Troubleshooting" section.
+```ruby
+  keep_code_folders: false
+```
+
+A directory used by the UID-pool to handle locks.
+```ruby
+  host_uid_pool_lock_path: tmp/uid_pool_lock
+```
 
 ### Limiting swap memory
 
@@ -128,7 +170,7 @@ GRUB_CMDLINE_LINUX="cgroup_enable=memory swapaccount=1"
 $ sudo update-grub
 ```
 Reboot the server, and you should be set. Read more about it [here][2].
-Remember to run `c.enable_swap_limit = true` in the configuration block.
+Remember to set `enable_swap_limit: true` in the YAML file.
 
 ### Limiting user quotas
 
@@ -149,54 +191,21 @@ $ sudo vim /etc/fstab
 
 $ mount -o remount
 ```
-Then reboot the server, and run the following:
+Then reboot the server, and run the following (quota is in KB):
 ```
-$ QUOTA_KB=10000 rake trusted_sandbox:set_quotas
+$ trusted_sandbox set_quotas 10000
 ```
-This sets the ~10MB quota on all UIDs that are in the range defined by `c.pool_size` and `c.pool_min_uid`. If you
-change these configuration parameters you must rerun the rake command. Refer to "Configuring rake tasks" section to
-make the rake task aware of your changes.
+This sets ~10MB quota on all UIDs that are in the range defined by `pool_size` and `pool_min_uid` parameters. If you
+change these configuration parameters you must rerun the command.
 
-Remember to run `c.enable_quotas = true` in the configuration block.
+Remember to set `enable_quotas: true` in the YAML file.
 
-Note: There is no way to assign different quotas to different users.
+Note: At this time, there is no way to assign different quotas to different users.
 
 ### Limiting network
 
-The only option available is to turn on and off network access using `c.enable_network`. Finer control of network
-access is currently not supported. If you need this feature please share your use case in the Issues section.
-
-### Configuring rake tasks
-
-Trusted Sandbox comes equipped with some useful rake tasks.
-
-Download and install an image on the host machine:
-```
-$ IMAGE_NAME="user/repo:version" rake trusted_sandbox:install_image   # Default IMAGE_NAME is "vaharoni/trusted_sandbox:1.9.3.v1"
-```
-Building your custom image:
-```
-$ TARGET=/path/to/dir/ rake trusted_sandbox:generate_image_files      # Default TARGET is "server_images"
-
-$ SOURCE=server_images/1.9.3 IMAGE_NAME="my_image:v1" rake trusted_sandbox:build_image
-```
-
-Setting user quotas:
-```
-$ QUOTA_KB=10000 rake trusted_sandbox:set_quotas
-```
-You can configure the `TrustedSandbox` class for all of these rake tasks by defining a `trusted_sandbox:setup` task in
-your Rakefile:
-
-```ruby
-task 'trusted_sandbox:setup' do
-  TrustedSandbox.config do |c|
-    c.docker_url = 'https://192.168.59.103:2376'
-    c.docker_login user: 'my_user', password: 'password', email: 'user@email.com'
-    # ...
-  end
-end
-```
+The only option available is to turn on and off network access using `enable_network`. Finer control of network
+access is currently not supported. If you need this feature please open an issue and share your use case.
 
 ## Using Trusted Sandbox
 
@@ -212,9 +221,9 @@ A less trivial example:
 ```ruby
 # my_function.rb
 
-# Assuming this gem is in the Gemfile of both the container and the host.
+# Example for requiring a gem, assuming it is in the Gemfile of both the container and the host.
 # If you want to access a gem that is only available to the container, put the require directive inside
-# #initialize or #run.
+# `initialize` or `run` methods.
 require 'hashie/mash'
 
 class MyFunction
@@ -249,13 +258,14 @@ end
 ```
 ```ruby
 # Somewhere else
+require 'trusted_sandbox'
+require 'my_function'
 a, b = TrustedSandbox.run! MyFunction, "a + b", "x ** 2", 2, 5
 # => 49
 ```
 Because serialization occurs through Marshalling, you should use primitive Ruby classes for your inputs as much as
-possible. You can prepare a docker image with additional gems, as explained in the "Using custom docker images"
-section. At this time, copying arbitrary files to containers as means of accessing custom classes is not supported.
-If you need this feature, please share your use case in the Issues section.
+possible. You can prepare a docker image with additional gems and custom Ruby classes, as explained in the
+"Using custom docker images" section.
 
 ### Running containers
 
@@ -330,62 +340,35 @@ You should not override user quota related parameters, as they must be prepared 
 
 ## Using custom docker images
 
-Trusted Sandbox comes with two ready-to-use images:
+Trusted Sandbox comes with one ready-to-use image that includes Ruby 2.1.2. It is hosted on Docker Hub under
+`vaharoni/trusted_sandbox:2.1.2.v1`.
 
-Ruby 1.9.3 image:
-```ruby
-# Lightweight image, fast to build, based on `apt-get install ruby`.
-c.docker_image_repo = 'vaharoni/trusted_sandbox'
-c.docker_image_tag = '1.9.3.v1'
+To use a different image from your Docker Hub account simply change the configuration parameters in the YAML file.
+
+To customize the provided images, run the following. It will copy the image definition to your current directory under
+`server_images/2.1.2`.
 ```
-
-Ruby 2.1.2 image:
-
-```ruby
-# Builds Ruby from source, slower to build.
-c.docker_image_repo = 'vaharoni/trusted_sandbox'
-c.docker_image_tag = '2.1.2.v1'
-```
-
-Both images have ActiveSupport gem installed.
-
-To use images from your Docker Hub account:
-
-```ruby
-c.login user: 'your_user', password: 'password', email: 'my@email.com'
-c.docker_image_repo = 'your_user/my_repo_name'
-c.docker_image_tag = 'your_image_tag'
-```
-
-To customize one of the provided images, run the following. It will copy the image definitions to your current
-directory under `server_images`.
-```
-$ rake trusted_sandbox:generate_image_files
-```
-
-Alternatively, you can copy the definitions to a different target directory relative to the current directory:
-```
-$ TARGET=config/server_images rake trusted_sandbox:generate_image_files
+$ trusted_sandbox generate_image
 ```
 
 After modifying the files to your satisfaction, you can either push it to your Docker Hub account, or build directly
-on the server:
+on the server. Assuming you kept the image under server_image/2.1.2:
 ```
-$ SOURCE=server_images/1.9.3 IMAGE_NAME="my_image:v1" rake trusted_sandbox:build_image
+$ docker build -t "your_user/your_image_name:your_image_version" server_images/2.1.2
 ```
 
 ## Troubleshooting
 
-If you encounter issues, try troubleshooting them by accessing your container's bash. Run the following in the
-configuration block:
+If you encounter issues, try troubleshooting them by accessing your container's bash. Make the following change in the
+YAML file:
 
 ```ruby
-c.keep_code_folders = true
+keep_code_folders: true
 ```
 This will keep your code folders from getting deleted when containers stop running. This allows you to do the
 following from your command line (adjust to your environment):
 ```
-$ docker run -it -v /home/MyUser/my_app/tmp/code_dirs/20000:/home/sandbox/src --entrypoint="/bin/bash" my_image:my_tag
+$ docker run -it -v /home/MyUser/my_app/tmp/code_dirs/20000:/home/sandbox/src --entrypoint="/bin/bash" my_user/my_image:my_tag
 ```
 
 ## Contributing
