@@ -8,7 +8,6 @@ module TrustedSandbox
   require 'trusted_sandbox/request_serializer'
   require 'trusted_sandbox/response'
   require 'trusted_sandbox/runner'
-  require 'trusted_sandbox/tasks'
   require 'trusted_sandbox/uid_pool'
   require 'trusted_sandbox/version'
 
