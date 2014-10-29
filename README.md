@@ -37,14 +37,20 @@ arguments sent to #initialize, loads the container, instantiates an object, and 
 ## Installing
 
 ### Step 1
-Add this to your gemfile:
+Add this line to your application's Gemfile:
 ```
 gem 'trusted_sandbox'
 ```
-or run this:
+
+And then execute:
 ```
-gem install trusted_sandbox
+$ bundle
 ```
+Or install it yourself as:
+```
+$ gem install trusted-sandbox
+```
+
 ### Step 2
 Install Docker. Refer to the Docker documentation to see how to install Docker on your environment.
 
@@ -379,6 +385,14 @@ following from your command line (adjust to your environment):
 ```
 $ docker run -it -v /home/MyUser/my_app/tmp/code_dirs/20000:/home/sandbox/src --entrypoint="/bin/bash" my_image:my_tag
 ```
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
 
 ## License
 Licensed under the [MIT license](http://opensource.org/licenses/MIT).

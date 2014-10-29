@@ -1,4 +1,4 @@
-class TrustedSandbox
+module TrustedSandbox
   class RequestSerializer
 
     attr_reader :host_code_dir_path, :input_file_name

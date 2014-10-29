@@ -1,4 +1,4 @@
-class TrustedSandbox
+module TrustedSandbox
 
   # Allows chaining so that specific invocations can override configurations.
   # Usage:

@@ -1,4 +1,4 @@
-class TrustedSandbox
+module TrustedSandbox
   class Response
 
     attr_reader :host_code_dir_path, :output_file_name, :stdout, :stderr,

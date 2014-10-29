@@ -1,4 +1,4 @@
-class TrustedSandbox
+module TrustedSandbox
   class Defaults < Config
 
     def initialize

@@ -1,4 +1,4 @@
-class TrustedSandbox
+module TrustedSandbox
   class Runner
 
     attr_reader :uid_pool, :config

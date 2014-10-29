@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-gem 'pry'
-gem 'docker-api', :require => 'docker'
+# Specify your gem's dependencies in trusted_sandbox.gemspec
+gemspec

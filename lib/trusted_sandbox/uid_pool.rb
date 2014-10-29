@@ -1,4 +1,4 @@
-class TrustedSandbox
+module TrustedSandbox
 
   # Offers intra-server inter-process pool of Uids. In other words:
   #   - Every server has its own pool. Since Docker containers live within a server, this is what we want.

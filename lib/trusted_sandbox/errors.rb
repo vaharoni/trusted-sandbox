@@ -1,4 +1,4 @@
-class TrustedSandbox
+module TrustedSandbox
   class InvocationError < StandardError ; end
   class PoolTimeoutError < StandardError; end
   class ContainerError < StandardError; end
