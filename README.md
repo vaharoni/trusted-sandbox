@@ -5,29 +5,30 @@ Run untrusted ruby code in a contained sandbox, using Docker. This gem was inspi
 ## Instant gratification
 
   Trusted Sandbox makes it simple to execute Ruby classes that `eval` untrusted code in a resource-controlled docker container.
+  ```ruby
+  # lib/my_function.rb
 
-    # lib/my_function.rb
+  class MyFunction
+    attr_reader :input
 
-    class MyFunction
-      attr_reader :input
-
-      def initialize(user_code, input)
-        @user_code = user_code
-        @input = input
-      end
-
-      def run
-        eval @user_code
-      end
+    def initialize(user_code, input)
+      @user_code = user_code
+      @input = input
     end
 
-    # somewhere_else.rb
+    def run
+      eval @user_code
+    end
+  end
 
-    untrusted_code = "input[:number] ** 2"
+  # somewhere_else.rb
 
-    # The following will run inside a Docker container
-    output = TrustedSandbox.run! MyFunction, untrusted_code, {number: 10}
-    # => 100
+  untrusted_code = "input[:number] ** 2"
+
+  # The following will run inside a Docker container
+  output = TrustedSandbox.run! MyFunction, untrusted_code, {number: 10}
+  # => 100
+  ```
 
   Classes you want to run in a container need to respond to #initialize and #run. Trusted Sandbox serializes the
   arguments sent to #initialize, loads the container, instantiates an object, and calls #run.
