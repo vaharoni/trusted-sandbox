@@ -129,7 +129,7 @@ Quotas
   enable_quotas:     false
 ```
 Settings for UID-pool used for assigning user quotas. Always used, even if quota functionality is disabled.
-It's very unlikely you'll need to touch these.
+It's very unlikely you'll need to touch these:
 ```ruby
   pool_size:         5000
   pool_min_uid:      20000
