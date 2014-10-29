@@ -2,6 +2,7 @@
 .DS_Store
 tmp/
 .swp
+pkg/
 config/trusted_sandbox.yml
 trusted_sandbox.yml
 trusted_sandbox_images/
