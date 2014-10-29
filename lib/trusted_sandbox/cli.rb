@@ -18,15 +18,16 @@ module TrustedSandbox
 
     desc 'generate_image VERSION', 'Creates the Docker image files and places them into the `trusted_sandbox_images` directory. Default version is 2.1.2'
     def generate_image(image_version = '2.1.2')
-      local_image = "trusted_sandbox_images/#{image_version}"
-      gem_image = File.expand_path("../#{local_image}", __FILE__)
+      target_dir = 'trusted_sandbox_images'
+      target_image_path = "#{target_dir}/#{image_version}"
+      gem_image_path = File.expand_path("../server_images/#{image_version}", __FILE__)
 
-      puts "Image #{image_version} does not exist" unless Dir.exist?(gem_image)
-      puts "Directory #{local_image} already exists" or return if Dir.exist?(local_image)
+      puts "Image #{image_version} does not exist" unless Dir.exist?(gem_image_path)
+      puts "Directory #{target_image_path} already exists" or return if Dir.exist?(target_image_path)
 
-      puts "Copying #{image_version} into #{local_image}"
-      FileUtils.mkdir_p 'trusted_sandbox_images'
-      FileUtils.cp_r gem_image, local_image
+      puts "Copying #{image_version} into #{target_image_path}"
+      FileUtils.mkdir_p target_dir
+      FileUtils.cp_r gem_image_path, target_image_path
     end
 
     desc 'set_quotas QUOTA_KB', 'Sets the quota for all the UIDs in the pool. This requires additional installation. Refer to the README file.'
