@@ -30,16 +30,16 @@ module TrustedSandbox
 
   # @param config_override [Hash] allows overriding configurations for a specific invocation
   def self.with_options(config_override={})
-    yield Api.new(config_override)
+    yield Api.new(config, uid_pool, config_override)
   end
 
   # @param klass [Class] the class to be instantiated in the safe sandbox
   # @param *args [Array] arguments to send to klass#new
   def self.run(klass, *args)
-    Api.new.run(klass, *args)
+    Api.new(config, uid_pool).run(klass, *args)
   end
 
   def self.run!(klass, *args)
-    Api.new.run!(klass, *args)
+    Api.new(config, uid_pool).run!(klass, *args)
   end
 end

@@ -33,7 +33,7 @@ module TrustedSandbox
 
     def source_file_path
       file, _line = klass.instance_method(:initialize).source_location
-      raise InvocationError.new("Cannot find location of class #{klass.name}") unless file
+      raise InvocationError.new("Cannot find location of class #{klass.name}") unless File.exist?(file.to_s)
       file
     end
 
