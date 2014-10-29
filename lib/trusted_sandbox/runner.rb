@@ -102,7 +102,7 @@ class TrustedSandbox
               config.container_code_path => {}
           },
           # 'WorkingDir' => '',
-          'NetworkDisabled' => true,
+          'NetworkDisabled' => config.network_access,
           # 'ExposedPorts' => {
           #     '22/tcp' => {}
           # }
