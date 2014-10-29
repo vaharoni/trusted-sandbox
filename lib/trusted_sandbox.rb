@@ -1,6 +1,5 @@
 require 'yaml'
 require 'docker'
-require 'trusted_sandbox/api'
 require 'trusted_sandbox/config'
 require 'trusted_sandbox/defaults'
 require 'trusted_sandbox/errors'
@@ -39,16 +38,16 @@ module TrustedSandbox
 
   # @param config_override [Hash] allows overriding configurations for a specific invocation
   def self.with_options(config_override={})
-    yield Api.new(config, uid_pool, config_override)
+    yield Runner.new(config, uid_pool, config_override)
   end
 
   # @param klass [Class] the class to be instantiated in the safe sandbox
   # @param *args [Array] arguments to send to klass#new
   def self.run(klass, *args)
-    Api.new(config, uid_pool).run(klass, *args)
+    Runner.new(config, uid_pool).run(klass, *args)
   end
 
   def self.run!(klass, *args)
-    Api.new(config, uid_pool).run!(klass, *args)
+    Runner.new(config, uid_pool).run!(klass, *args)
   end
 end

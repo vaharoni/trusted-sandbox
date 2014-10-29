@@ -5,8 +5,9 @@ module TrustedSandbox
 
     # @param config [Config]
     # @param uid_pool [UidPool]
-    def initialize(config, uid_pool)
-      @config = config
+    # @param config_override [Hash] allows overriding configurations for a specific invocation
+    def initialize(config, uid_pool, config_override={})
+      @config = config.override(config_override)
       @uid_pool = uid_pool
     end
 
