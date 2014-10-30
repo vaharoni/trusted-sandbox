@@ -21,7 +21,7 @@ module TrustedSandbox
       start_container
     ensure
       release_uid
-      remove_code_dir unless config.keep_code_folders
+      remove_code_dir
       remove_container
     end
 
@@ -48,10 +48,20 @@ module TrustedSandbox
     end
 
     def remove_code_dir
-      FileUtils.rm_rf code_dir_path
+      FileUtils.rm_rf code_dir_path unless config.keep_code_folders
     end
 
     def create_code_dir
+      if config.keep_code_folders
+
+        puts "Creating #{code_dir_path}"
+        puts nil
+        puts 'To launch and ssh into a new docker container with this directory mounted, run:'
+        puts '-' * 80
+        puts %{docker run -it -v #{code_dir_path}:/home/sandbox/src --entrypoint="/bin/bash" #{config.docker_image_name} -s}
+        puts nil
+      end
+
       FileUtils.mkdir_p code_dir_path
     end
 

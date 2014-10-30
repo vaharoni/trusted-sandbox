@@ -54,7 +54,10 @@ $ gem install trusted-sandbox
 ```
 
 ### Step 2
-Install Docker. Refer to the Docker documentation to see how to install Docker on your environment.
+Install the latest version of Docker. **Do not** install from your distro pacakge management system, as the docker
+version is old and does not support what Trusted Sandbox needs. Refer to the Docker documentation to see how to install
+Docker on your environment.
+
 Note that on a Linux server the docker daemon runs as root and owns the socket used to connect to it.
 To give your app user access to that socket you will need to add the user to the docker group.
 ```
@@ -400,7 +403,7 @@ keep_code_folders: true
 This will keep your code folders from getting deleted when containers stop running. This allows you to do the
 following from your command line (adjust to your environment):
 ```
-$ docker run -it -v /home/MyUser/my_app/tmp/code_dirs/20000:/home/sandbox/src --entrypoint="/bin/bash" my_user/my_image:my_tag
+$ docker run -it -v /home/MyUser/my_app/tmp/code_dirs/20000:/home/sandbox/src --entrypoint="/bin/bash" my_user/my_image:my_tag -s
 ```
 
 ## Contributing

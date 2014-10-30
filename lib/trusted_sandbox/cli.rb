@@ -23,6 +23,13 @@ module TrustedSandbox
       puts 'Trusted Sandbox seems to be configured correctly!'
     end
 
+    desc 'ssh UID', 'Launch a container with shell and mount the code folder. Works only if keep_code_folders is true. UID is the suffix of the code folder'
+    def ssh(uid)
+      raise 'keep_code_folders must be set to true' unless TrustedSandbox.config.keep_code_folders
+      local_code_dir = File.join TrustedSandbox.config.host_code_root_path, uid
+      `docker run -it -v #{local_code_dir}:/home/sandbox/src --entrypoint="/bin/bash" #{TrustedSandbox.config.docker_image_name} -s`
+    end
+
     desc 'generate_image VERSION', 'Creates the Docker image files and places them into the `trusted_sandbox_images` directory. Default version is 2.1.2'
     def generate_image(image_version = '2.1.2')
       target_dir = 'trusted_sandbox_images'

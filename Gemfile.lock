@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    trusted-sandbox (0.0.8.pre)
+    trusted-sandbox (0.0.9.pre)
       docker-api (~> 1.13)
       thor (~> 0.19)
 
