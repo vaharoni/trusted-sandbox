@@ -18,7 +18,7 @@ module TrustedSandbox
 
     desc 'test', 'Checks Trusted Sandbox can connect to Docker'
     def test
-      TrustedSandbox.test
+      TrustedSandbox.test_connection
       puts 'Trusted Sandbox seems to be configured correctly!'
     end
 

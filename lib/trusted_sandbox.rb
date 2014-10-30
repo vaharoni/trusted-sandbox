@@ -11,7 +11,7 @@ module TrustedSandbox
   require 'trusted_sandbox/uid_pool'
   require 'trusted_sandbox/version'
 
-  def self.test
+  def self.test_connection
     Docker.version
     true
   end
