@@ -1,3 +1,4 @@
+require 'trusted_sandbox'
 require 'thor'
 
 module TrustedSandbox
