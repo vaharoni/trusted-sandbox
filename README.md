@@ -55,7 +55,7 @@ $ gem install trusted-sandbox
 
 ### Step 2
 Install Docker. Refer to the Docker documentation to see how to install Docker on your environment.
-Note that on a linux server the docker daemon runs as root and owns the socket used to connect to it.
+Note that on a Linux server the docker daemon runs as root and owns the socket used to connect to it.
 To give your app user access to that socket you will need to add the user to the docker group.
 ```
 $ sudo gpasswd -a ${USER} docker
@@ -76,7 +76,7 @@ Run the following command which will copy the `trusted_sandbox.yml` file into yo
 $ trusted_sandbox install
 ```
 
-Follow the configuration instructions below. Once you're done configuring, test your installation by running:
+Then follow the configuration instructions below. Once you're done configuring, test your installation by running:
 ```
 $ trusted_sandbox test
 ```
@@ -105,14 +105,23 @@ Follow the instructions in the relevant sections of the configuration guide.
 
 Let's go over the sections of the YAML configuration file you created in step 3 above.
 
-### Docker access
+### Docker connection
+
+Trusted Sandbox uses the `docker-api` gem to communicate with docker. `docker-api`'s default work quite well for a
+Linux host, and you should be good by omitting `docker_url` and `docker_cert_path` all together.
+
 ```ruby
-  # ENV['DOCKER_HOST'] is used if omitted
+  # If omitted ENV['DOCKER_HOST'] is used. If it is not set, docker-api defaults are used
   docker_url: https://192.168.59.103:2376
 
-  # ENV['DOCKER_CERT_PATH'] is used if omitted
+  # If omitted ENV['DOCKER_CERT_PATH'] is used. If it is not set, docker-api defaults are used
   docker_cert_path: ~/.boot2docker/certs/boot2docker-vm
+```
+If you need finer control of `docker-api` configuration, you can add a `docker_options` hash entry to the
+YAML file which will override any configuration and passed through to `Docker.options`.
 
+In addition, these docker-related configuration parameters can be used:
+```ruby
   docker_image_name: vaharoni/trusted_sandbox:2.1.2.v1
 
   # Optional authentication
@@ -123,9 +132,6 @@ Let's go over the sections of the YAML configuration file you created in step 3 
 
 ```
 
-Trusted Sandbox uses the `docker-api` gem to communicate with docker. Some of the parameters above are used to setup
-the global `Docker` class. For finer control of its configuration, you can add a `docker_options` hash entry to the
-YAML file which will override any configuration and passed through to `Docker.options`.
 
 ### Limiting resources
 CPU:
@@ -160,21 +166,16 @@ Note that controlling memory swap limits and user quotas requires additional ste
 
 ### Execution parameters
 
-A temporary directory under which sub directories are created and mounted to containers.
-The code and args exchange between the host and containers is done via these sub directories.
-
 ```ruby
+  # A temporary folder under which sub folders are created and mounted to containers.
+  # The code and args exchange between the host and containers is done via these sub folders.
   host_code_root_path: tmp/code_dirs
-```
 
-When set to true, the temporary sub directories will not be erased. This allows you to login to the container to
-troubleshoot issues as explained in the "Troubleshooting" section.
-```ruby
+  # When set to true, the temporary sub folders will not be erased. This allows you to login
+  # to the container to troubleshoot issues as explained in the "Troubleshooting" section.
   keep_code_folders: false
-```
 
-A directory used by the UID-pool to handle locks.
-```ruby
+  # A folder used by the UID-pool to handle locks.
   host_uid_pool_lock_path: tmp/uid_pool_lock
 ```
 

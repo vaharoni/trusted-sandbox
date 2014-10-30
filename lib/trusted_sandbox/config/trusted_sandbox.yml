@@ -1,12 +1,13 @@
 development:
-  # Optional login information
-  docker_login:
-    user:                       my_user
-    password:                   my_password
-    email:                      email@email.com
+  # # Optional login information
+  # docker_login:
+  #  user:                       my_user
+  #  password:                   my_password
+  #  email:                      email@email.com
 
-  docker_url:                   https://192.168.59.103:2376
-  docker_cert_path:             ~/.boot2docker/certs/boot2docker-vm
+  # # For a linux host these can remain empty
+  # docker_url:                   https://192.168.59.103:2376
+  # docker_cert_path:             ~/.boot2docker/certs/boot2docker-vm
 
   docker_image_name:            vaharoni/trusted_sandbox:2.1.2.v1
 

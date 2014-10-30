@@ -52,11 +52,11 @@ module TrustedSandbox
 
     def docker_cert_path=(value)
       @docker_cert_path = File.expand_path(value)
-      Docker.options = {
-        private_key_path: "#{@docker_cert_path}/key.pem",
-        certificate_path: "#{@docker_cert_path}/cert.pem",
-        ssl_verify_peer: false
-      }.merge(docker_options)
+      @docker_options_for_cert = {
+          private_key_path: "#{@docker_cert_path}/key.pem",
+          certificate_path: "#{@docker_cert_path}/cert.pem",
+          ssl_verify_peer: false
+      }
     end
 
     def host_code_root_path=(path)
@@ -81,6 +81,8 @@ module TrustedSandbox
     # Called to do any necessary setup to allow staged configuration
     # @return [Config] self for chaining
     def finished_configuring
+      Docker.options = @docker_options_for_cert.merge(docker_options)
+
       return self unless @docker_auth_needed
       Docker.authenticate! username: @docker_auth_user, password: @docker_auth_password, email: @docker_auth_email
       @docker_auth_needed = false
@@ -93,6 +95,7 @@ module TrustedSandbox
     #   contain a value for the requested configuration options
     # @params params [Hash] hash containing configuration options
     def initialize(other_config, params={})
+      @docker_options_for_cert = {}
       @other_config = other_config
       params.each do |key, value|
         send "#{key}=", value
