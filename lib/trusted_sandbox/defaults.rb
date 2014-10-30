@@ -14,8 +14,8 @@ module TrustedSandbox
       self.host_code_root_path = 'tmp/code_dirs'
       self.host_uid_pool_lock_path = 'tmp/uid_pool_lock'
 
-      self.docker_url = ENV['DOCKER_HOST']
-      self.docker_cert_path = ENV['DOCKER_CERT_PATH']
+      self.docker_url = ENV['DOCKER_HOST'] if ENV['DOCKER_HOST']
+      self.docker_cert_path = ENV['DOCKER_CERT_PATH'] if ENV['DOCKER_CERT_PATH']
 
       # Note, changing these may require changing Dockerfile and run.rb and rebuilding the docker image
       self.container_code_path = '/home/sandbox/src'
