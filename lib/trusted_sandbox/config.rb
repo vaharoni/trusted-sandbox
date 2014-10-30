@@ -6,14 +6,14 @@ module TrustedSandbox
   #   specific_invocation = general_config.override(memory_limit: 200)
   #
   class Config
-    attr_reader :other_config
+    attr_reader :fallback_config
 
     def self.attr_reader_with_fallback(*names)
       names.each do |name|
         define_method name do
           value = instance_variable_get("@#{name}")
           return value unless value.nil?
-          return other_config.send(name) if other_config.respond_to?(name)
+          return fallback_config.send(name) if fallback_config.respond_to?(name)
           nil
         end
       end
@@ -91,12 +91,12 @@ module TrustedSandbox
 
     private_class_method :new
 
-    # @params other_config [Config] config object that will be deferred to if the current config object does not
+    # @params fallback_config [Config] config object that will be deferred to if the current config object does not
     #   contain a value for the requested configuration options
     # @params params [Hash] hash containing configuration options
-    def initialize(other_config, params={})
+    def initialize(fallback_config, params={})
       @docker_options_for_cert = {}
-      @other_config = other_config
+      @fallback_config = fallback_config
       params.each do |key, value|
         send "#{key}=", value
       end
