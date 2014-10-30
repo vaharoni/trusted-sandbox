@@ -115,7 +115,7 @@ environment variables.
 
 ### Docker connection
 
-Trusted Sandbox uses the `docker-api` gem to communicate with docker. `docker-api`'s default work quite well for a
+Trusted Sandbox uses the `docker-api` gem to communicate with docker. `docker-api`'s defaults work quite well for a
 Linux host, and you should be good by omitting `docker_url` and `docker_cert_path` all together.
 
 ```ruby
@@ -426,7 +426,7 @@ $ trusted_sandbox reset_uid_pool
 
 To avoid containers from being deleted after they finish running, set:
 ```ruby
-keep_container: true
+keep_containers: true
 ```
 This will allow you to view containers by running `docker ps -a` and then check out container logs
 `docker logs CONTAINER_ID` or container parameters `docker inspect CONTAINER_ID`.
