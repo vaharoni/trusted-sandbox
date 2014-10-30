@@ -53,16 +53,35 @@ Or install it yourself as:
 $ gem install trusted-sandbox
 ```
 
-Then, run the following command which will copy the `trusted_sandbox.yml` file into your current directory, or
+### Step 2
+Install Docker. Refer to the Docker documentation to see how to install Docker on your environment.
+Note that on a linux server the docker daemon runs as root and owns the socket used to connect to it.
+To give your app user access to that socket you will need to add the user to the docker group.
+```
+$ sudo gpasswd -a ${USER} docker
+$ sudo service docker.io restart
+```
+then reconnect to your shell session and try the following (without sudo command):
+```
+$ docker images
+```
+If it works, then you are all set.
+
+You can read more about this issue [here][5].
+
+### Step 3
+Run the following command which will copy the `trusted_sandbox.yml` file into your current directory, or
 `config` directory if it exists:
 ```
 $ trusted_sandbox install
 ```
 
-### Step 2
-Install Docker. Refer to the Docker documentation to see how to install Docker on your environment.
+Follow the configuration instructions below. Once you're done configuring, test your installation by running:
+```
+$ trusted_sandbox test
+```
 
-### Step 3
+### Step 4
 Install the image. This step is optional, as Docker automatically installs images when you first run them. However,
 since it takes a few minutes we suggest you do this in advance.
 ```
@@ -77,14 +96,14 @@ $ sudo service docker.io restart
 ```
 and then try again.
 
-### Step 4
+### Step 5
 
 If you'd like to limit swap memory or set user quotas you'll have to install additional programs on your server.
 Follow the instructions in the relevant sections of the configuration guide.
 
 ## Configuring Trusted Sandbox
 
-Let's go over the sections of the YAML configuration file you created in step 1 above.
+Let's go over the sections of the YAML configuration file you created in step 3 above.
 
 ### Docker access
 ```ruby
@@ -398,3 +417,4 @@ Licensed under the [MIT license](http://opensource.org/licenses/MIT).
 [2]: https://www.digitalocean.com/community/articles/how-to-enable-user-quotas
 [3]: http://hmarr.com/2013/oct/16/codecube-runnable-gists/
 [4]: https://www.digitalocean.com/community/tutorials/how-to-enable-user-quotas
+[5]: http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo

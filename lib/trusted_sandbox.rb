@@ -11,6 +11,11 @@ module TrustedSandbox
   require 'trusted_sandbox/uid_pool'
   require 'trusted_sandbox/version'
 
+  def self.test
+    Docker.version
+    true
+  end
+
   # Usage:
   #   TrustedSandbox.config do |c|
   #     c.pool_size = 10

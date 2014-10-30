@@ -16,6 +16,12 @@ module TrustedSandbox
       FileUtils.cp File.expand_path('../config/trusted_sandbox.yml', __FILE__), target_file
     end
 
+    desc 'test', 'Checks Trusted Sandbox can connect to Docker'
+    def test
+      TrustedSandbox.test
+      puts 'Trusted Sandbox seems to be configured correctly!'
+    end
+
     desc 'generate_image VERSION', 'Creates the Docker image files and places them into the `trusted_sandbox_images` directory. Default version is 2.1.2'
     def generate_image(image_version = '2.1.2')
       target_dir = 'trusted_sandbox_images'
