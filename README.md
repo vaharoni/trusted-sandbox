@@ -223,7 +223,9 @@ In order to enable quotas do the following on the server:
 ```
 $ sudo apt-get install quota
 ```
-And follow [these instructions][4], which are also brought here for completeness:
+And follow [these instructions][4] as well as [this resource][6], which we bring here for completeness. Note that these
+may vary for your distro.
+
 ```
 $ sudo vim /etc/fstab
 ```
@@ -233,9 +235,21 @@ LABEL=cloudimg-rootfs   /        ext4   defaults,discard,usrquota       0 0
 ```
 Then do:
 ```
-$ mount -o remount
+$ sudo touch /aquota.user
+$ sudo chmod 600 /aquota.*
+$ sudo mount -o remount /
 ```
-and reboot the server. Finally, run the following (quota is in KB):
+and **reboot the server**. Then do:
+```
+$ sudo quotacheck -avum
+$ sudo quotaon -avu
+```
+You should see something like this:
+```
+/dev/disk/by-uuid/d36a9e2f-dae9-477f-8aea-29f1bdd1c04e [/]: user quotas turned on
+```
+
+To actually set the quotas, run the following (quota is in KB):
 ```
 $ sudo trusted_sandbox set_quotas 10000
 ```
@@ -244,7 +258,10 @@ change these configuration parameters you must rerun the `set_quotas` command.
 
 Remember to set `enable_quotas: true` in the YAML file.
 
-Note: At this time, there is no way to assign different quotas to different users.
+To get a quota report, do:
+```
+$ sudo repquota -a
+```
 
 ### Limiting network
 
@@ -448,7 +465,8 @@ $ docker ps -aq | xargs docker rm
 Licensed under the [MIT license](http://opensource.org/licenses/MIT).
 
 [1]: http://hmarr.com/2013/oct/16/codecube-runnable-gists/
-[2]: https://www.digitalocean.com/community/articles/how-to-enable-user-quotas
+[2]: https://www.digitalocean.com/community/tutorials/how-to-enable-user-and-group-quotas
 [3]: http://hmarr.com/2013/oct/16/codecube-runnable-gists/
 [4]: https://www.digitalocean.com/community/tutorials/how-to-enable-user-quotas
 [5]: http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo
+[6]: http://www.howtoforge.com/how-to-set-up-journaled-quota-on-debian-lenny
