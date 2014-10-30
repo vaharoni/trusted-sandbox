@@ -182,6 +182,11 @@ host_code_root_path: tmp/code_dirs
 # to the container to troubleshoot issues as explained in the "Troubleshooting" section.
 keep_code_folders: false
 
+# When set to true, containers will not be erased after they finish running. This allows you
+# to troubleshoot issues by viewing container parameters and logs as explained in the
+# "Troubleshooting" section.
+keep_containers: false
+
 # A folder used by the UID-pool to handle locks.
 host_uid_pool_lock_path: tmp/uid_pool_lock
 ```
