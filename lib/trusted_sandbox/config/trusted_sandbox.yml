@@ -1,11 +1,11 @@
 development:
-  # # Optional login information
+  # # Optional login information for Docker Hub
   # docker_login:
   #  user:                       my_user
   #  password:                   my_password
   #  email:                      email@email.com
 
-  # # For a linux host these can remain empty
+  # # For a linux host these can typically remain commented
   # docker_url:                   https://192.168.59.103:2376
   # docker_cert_path:             ~/.boot2docker/certs/boot2docker-vm
 
@@ -24,10 +24,13 @@ development:
 
   host_code_root_path:          tmp/code_dirs
   host_uid_pool_lock_path:      tmp/uid_pool_lock
-  keep_code_folders:            false
 
-  pool_size:                    5000
-  pool_min_uid:                 20000
-  pool_timeout:                 3
-  pool_retries:                 5
-  pool_delay:                   0.5
+  keep_code_folders:            false
+  keep_containers:              false
+
+  # # It's very unlikely you'll need to change these
+  #  pool_size:                    5000
+  #  pool_min_uid:                 20000
+  #  pool_timeout:                 3
+  #  pool_retries:                 5
+  #  pool_delay:                   0.5

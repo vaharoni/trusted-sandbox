@@ -53,5 +53,14 @@ module TrustedSandbox
         `setquota -u #{uid} 0 #{quota_kb} 0 0 /`
       end
     end
+
+    desc 'reset_uid_pool UID', 'Release the provided UID from the UID-pool. If the UID is omitted, all UIDs that were reserved will be released, effectively resetting the pool'
+    def reset_uid_pool(uid = nil)
+      if uid
+        TrustedSandbox.uid_pool.release uid
+      else
+        TrustedSandbox.uid_pool.release_all
+      end
+    end
   end
 end

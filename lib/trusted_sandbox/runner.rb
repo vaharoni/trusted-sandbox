@@ -40,7 +40,7 @@ module TrustedSandbox
     end
 
     def release_uid
-      uid_pool.release(@uid) if @uid
+      uid_pool.release(@uid) if @uid and !config.keep_code_folders
     end
 
     def code_dir_path
@@ -86,7 +86,7 @@ module TrustedSandbox
     end
 
     def remove_container
-      return unless @container
+      return unless @container and !config.keep_containers
       @container.delete force: true
     end
 

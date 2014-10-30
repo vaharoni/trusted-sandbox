@@ -54,17 +54,17 @@ $ gem install trusted-sandbox
 ```
 
 ### Step 2
-Install the latest version of Docker. **Do not** install from your distro pacakge management system, as the docker
-version is old and does not support what Trusted Sandbox needs. Refer to the Docker documentation to see how to install
-Docker on your environment.
+Install Docker, Server version >= 1.2.0. Note that at the time of writing some distro package management systems have
+an earlier version. Refer to the Docker documentation to see how to install the latest Docker on your environment.
 
-Note that on a Linux server the docker daemon runs as root and owns the socket used to connect to it.
-To give your app user access to that socket you will need to add the user to the docker group.
+Note that on a Linux server the docker daemon runs as root, and the root user owns the socket used to connect to the
+daemon. In order to avoid the need to run your application with sudo privileges, add the application user to the
+`docker` group (keep `${USER}` for the connected user or change to suit your needs):
 ```
 $ sudo gpasswd -a ${USER} docker
 $ sudo service docker.io restart
 ```
-then reconnect to your shell session and try the following (without sudo command):
+then reconnect to your shell session and try the following (without sudo):
 ```
 $ docker images
 ```
@@ -79,7 +79,8 @@ Run the following command which will copy the `trusted_sandbox.yml` file into yo
 $ trusted_sandbox install
 ```
 
-Then follow the configuration instructions below. Once you're done configuring, test your installation by running:
+Then follow the configuration instructions in this guide. Once you're done configuring, test your installation by
+running:
 ```
 $ trusted_sandbox test
 ```
@@ -92,8 +93,10 @@ $ docker run --rm vaharoni/trusted_sandbox:2.1.2.v1
 ```
 If you see the message "you must provide a uid", then you are set.
 
-If you receive an error that looks like this: `Error response from daemon: Cannot start container 9f3bd8d72f0704980cedacc068261c38e280e7314916245550a6d48431ea8f11: fork/exec /var/lib/docker/init/dockerinit-1.0.1: cannot allocate memory`
-consider restarting docker:
+Consider restarting the docker service if you receive an error that looks like this:
+`Error response from daemon: Cannot start container 9f3bd8d72f0704980cedacc068261c38e280e7314916245550a6d48431ea8f11:
+fork/exec /var/lib/docker/init/dockerinit-1.0.1: cannot allocate memory`
+
 ```
 $ sudo service docker.io restart
 ```
@@ -107,6 +110,8 @@ Follow the instructions in the relevant sections of the configuration guide.
 ## Configuring Trusted Sandbox
 
 Let's go over the sections of the YAML configuration file you created in step 3 above.
+The top key of the YAML file is an environment string that can be set by `TRUSTED_SANDBOX_ENV` or `RAILS_ENV`
+environment variables.
 
 ### Docker connection
 
@@ -114,25 +119,24 @@ Trusted Sandbox uses the `docker-api` gem to communicate with docker. `docker-ap
 Linux host, and you should be good by omitting `docker_url` and `docker_cert_path` all together.
 
 ```ruby
-  # If omitted ENV['DOCKER_HOST'] is used. If it is not set, docker-api defaults are used
-  docker_url: https://192.168.59.103:2376
+# If omitted ENV['DOCKER_HOST'] is used. If it is not set, docker-api defaults are used.
+docker_url: https://192.168.59.103:2376
 
-  # If omitted ENV['DOCKER_CERT_PATH'] is used. If it is not set, docker-api defaults are used
-  docker_cert_path: ~/.boot2docker/certs/boot2docker-vm
+# If omitted ENV['DOCKER_CERT_PATH'] is used. If it is not set, docker-api defaults are used.
+docker_cert_path: ~/.boot2docker/certs/boot2docker-vm
 ```
 If you need finer control of `docker-api` configuration, you can add a `docker_options` hash entry to the
 YAML file which will override any configuration and passed through to `Docker.options`.
 
 In addition, these docker-related configuration parameters can be used:
 ```ruby
-  docker_image_name: vaharoni/trusted_sandbox:2.1.2.v1
+docker_image_name: vaharoni/trusted_sandbox:2.1.2.v1
 
-  # Optional authentication
-  docker_login:
-    user: my_user
-    password: my_password
-    email: email@email.com
-
+# Optional authentication
+docker_login:
+  user: my_user
+  password: my_password
+  email: email@email.com
 ```
 
 
@@ -170,16 +174,16 @@ Note that controlling memory swap limits and user quotas requires additional ste
 ### Execution parameters
 
 ```ruby
-  # A temporary folder under which sub folders are created and mounted to containers.
-  # The code and args exchange between the host and containers is done via these sub folders.
-  host_code_root_path: tmp/code_dirs
+# A temporary folder under which sub folders are created and mounted to containers.
+# The code and args exchange between the host and containers is done via these sub folders.
+host_code_root_path: tmp/code_dirs
 
-  # When set to true, the temporary sub folders will not be erased. This allows you to login
-  # to the container to troubleshoot issues as explained in the "Troubleshooting" section.
-  keep_code_folders: false
+# When set to true, the temporary sub folders will not be erased. This allows you to login
+# to the container to troubleshoot issues as explained in the "Troubleshooting" section.
+keep_code_folders: false
 
-  # A folder used by the UID-pool to handle locks.
-  host_uid_pool_lock_path: tmp/uid_pool_lock
+# A folder used by the UID-pool to handle locks.
+host_uid_pool_lock_path: tmp/uid_pool_lock
 ```
 
 ### Limiting swap memory
@@ -228,7 +232,7 @@ $ mount -o remount
 ```
 and reboot the server. Finally, run the following (quota is in KB):
 ```
-$ trusted_sandbox set_quotas 10000
+$ sudo trusted_sandbox set_quotas 10000
 ```
 This sets ~10MB quota on all UIDs that are in the range defined by `pool_size` and `pool_min_uid` parameters. If you
 change these configuration parameters you must rerun the `set_quotas` command.
@@ -404,6 +408,27 @@ This will keep your code folders from getting deleted when containers stop runni
 following from your command line (adjust to your environment):
 ```
 $ docker run -it -v /home/MyUser/my_app/tmp/code_dirs/20000:/home/sandbox/src --entrypoint="/bin/bash" my_user/my_image:my_tag -s
+```
+Note that this will also take out that specific UID from the UID-pool so that future runs don't remount the same folder.
+To release that UID back to the pool, either reset that specific UID:
+```
+$ trusted_sandbox reset_uid_pool 20000
+```
+or reset all UIDs (make sure no other containers are running):
+```
+$ trusted_sandbox reset_uid_pool
+```
+
+To avoid containers from being deleted after they finish running, set:
+```ruby
+keep_container: true
+```
+This will allow you to view containers by running `docker ps -a` and then check out container logs
+`docker logs CONTAINER_ID` or container parameters `docker inspect CONTAINER_ID`.
+
+You will need to delete containers yourself by running `docker rm CONTAINER_ID`. To delete all of your containers do:
+```
+$ docker ps -aq | xargs docker rm
 ```
 
 ## Contributing
