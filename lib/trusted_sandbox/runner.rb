@@ -94,9 +94,11 @@ module TrustedSandbox
       Timeout.timeout(config.execution_timeout) do
         stdout, stderr = @container.attach(stream: true, stdin: nil, stdout: true, stderr: true, logs: true, tty: false)
       end
-      TrustedSandbox::Response.new code_dir_path, config.container_output_filename, stdout, stderr
+      response = TrustedSandbox::Response.new stdout, stderr, code_dir_path, config.container_output_filename
+      response.parse!
     rescue Timeout::Error => e
-      raise TrustedSandbox::ExecutionTimeoutError.new(e)
+      logs = @container.logs(stdout: true, stderr: true)
+      TrustedSandbox::Response.timeout_error(e, logs)
     end
 
     def remove_container

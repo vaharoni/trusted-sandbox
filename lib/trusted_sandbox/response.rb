@@ -4,14 +4,26 @@ module TrustedSandbox
     attr_reader :host_code_dir_path, :output_file_name, :stdout, :stderr,
                 :raw_response, :status, :error, :error_to_raise, :output
 
+    # @param stdout [String, Array] response of stdout from the container
+    # @param stderr [String, Array] response of stderr from the container
     # @param host_code_dir_path [String] path to the folder where the argument value needs to be stored
     # @param output_file_name [String] name of output file inside the host_code_dir_path
-    def initialize(host_code_dir_path, output_file_name, stdout, stderr)
-      @host_code_dir_path = host_code_dir_path
-      @output_file_name = output_file_name
+    def initialize(stdout = nil, stderr = nil, host_code_dir_path = nil, output_file_name = nil)
       @stdout = stdout
       @stderr = stderr
-      parse_output_file
+      @host_code_dir_path = host_code_dir_path
+      @output_file_name = output_file_name
+    end
+
+    # @return [Response] object initialized with timeout error details
+    def self.timeout_error(err, logs)
+      obj = new(logs)
+      obj.instance_eval do
+        @status = 'error'
+        @error = err
+        @error_to_raise = TrustedSandbox::ExecutionTimeoutError.new(err)
+      end
+      obj
     end
 
     # @return [Boolean]
@@ -27,13 +39,9 @@ module TrustedSandbox
       output
     end
 
-    private
-
-    def output_file_path
-      File.join(host_code_dir_path, output_file_name)
-    end
-
-    def parse_output_file
+    # Parses the output file and stores the values in the appropriate ivars
+    # @return [nil]
+    def parse!
       begin
         data = File.binread output_file_path
         @raw_response = Marshal.load(data)
@@ -55,6 +63,13 @@ module TrustedSandbox
       @output = @raw_response[:output]
       @error = @raw_response[:error]
       @error_to_raise = UserCodeError.new(@error) if @error
+      nil
+    end
+
+    private
+
+    def output_file_path
+      File.join(host_code_dir_path, output_file_name)
     end
 
     def propagate_errors!
