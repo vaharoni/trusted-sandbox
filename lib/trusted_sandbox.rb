@@ -5,6 +5,7 @@ module TrustedSandbox
   require 'trusted_sandbox/config'
   require 'trusted_sandbox/defaults'
   require 'trusted_sandbox/errors'
+  require 'trusted_sandbox/general_purpose'
   require 'trusted_sandbox/request_serializer'
   require 'trusted_sandbox/response'
   require 'trusted_sandbox/runner'
