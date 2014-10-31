@@ -36,7 +36,7 @@ module TrustedSandbox
       target_image_path = "#{target_dir}/#{image_name}"
       gem_image_path = File.expand_path("../server_images/#{image_name}", __FILE__)
 
-      puts "Image #{image_name} does not exist" unless Dir.exist?(gem_image_path)
+      puts "Image #{image_name} does not exist" or return unless Dir.exist?(gem_image_path)
       puts "Directory #{target_image_path} already exists" or return if Dir.exist?(target_image_path)
 
       puts "Copying #{image_name} into #{target_image_path}"
