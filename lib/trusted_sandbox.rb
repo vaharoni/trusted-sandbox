@@ -56,14 +56,6 @@ module TrustedSandbox
     new_runner.run!(klass, *args)
   end
 
-  def self.run_code(code, args={})
-    new_runner.run(TrustedSandbox::GeneralPurpose, code, args)
-  end
-
-  def self.run_code!(code, args={})
-    new_runner.run!(TrustedSandbox::GeneralPurpose, code, args)
-  end
-
   def self.new_runner(config_override = {})
     Runner.new(config, uid_pool, config_override)
   end

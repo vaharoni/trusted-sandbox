@@ -27,10 +27,25 @@ module TrustedSandbox
 
     # @param klass [Class] the class object that should be run
     # @param *args [Array] arguments to send to klass#initialize
-    # @return [Response]
+    # @return [Object] return value from the #eval method
     # @raise [InternalError, UserCodeError, ContainerError]
     def run!(klass, *args)
       run(klass, *args).output!
+    end
+
+    # @param code [String] code to be evaluated
+    # @param args [Hash] hash to send to GeneralPurpose
+    # @return [Response]
+    def run_code(code, args={})
+      new_runner.run(GeneralPurpose, code, args)
+    end
+
+    # @param code [String] code to be evaluated
+    # @param args [Hash] hash to send to GeneralPurpose
+    # @return [Object] return value from the #eval method
+    # @raise [InternalError, UserCodeError, ContainerError]
+    def run_code!(code, args={})
+      new_runner.run!(GeneralPurpose, code, args)
     end
 
     private
