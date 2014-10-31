@@ -23,8 +23,8 @@ output = TrustedSandbox.run_code! untrusted_code, input: {number: 10}
 executes.
 
 In addition, you can send any class to execute within a Docker container. All you need is to have the class respond to
-`initialize` and `run`. Trusted Sandbox serializes the arguments sent to `initialize`, loads the container, instantiates
-an object, and calls `run`:
+`initialize` and `run`. Trusted Sandbox loads the container, copies the class file to the container, serializes the
+arguments sent to `initialize`, instantiates an object, calls `run`, and serializes its return value back to the host.
 
 ```ruby
 # lib/my_function.rb
