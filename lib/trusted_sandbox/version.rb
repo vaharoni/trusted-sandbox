@@ -1,3 +1,3 @@
 module TrustedSandbox
-  VERSION = '0.0.11.pre'
+  VERSION = '0.1.0'
 end
