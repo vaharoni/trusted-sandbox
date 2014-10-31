@@ -37,7 +37,7 @@ module TrustedSandbox
     # @param args [Hash] hash to send to GeneralPurpose
     # @return [Response]
     def run_code(code, args={})
-      new_runner.run(GeneralPurpose, code, args)
+      run(GeneralPurpose, code, args)
     end
 
     # @param code [String] code to be evaluated
@@ -45,7 +45,7 @@ module TrustedSandbox
     # @return [Object] return value from the #eval method
     # @raise [InternalError, UserCodeError, ContainerError]
     def run_code!(code, args={})
-      new_runner.run!(GeneralPurpose, code, args)
+      run!(GeneralPurpose, code, args)
     end
 
     private
