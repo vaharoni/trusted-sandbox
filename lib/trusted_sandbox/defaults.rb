@@ -27,7 +27,7 @@ module TrustedSandbox
       self.pool_size = 5000
 
       self.keep_code_folders = false
-      self.containers = false
+      self.keep_containers = false
     end
 
   end

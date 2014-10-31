@@ -50,7 +50,9 @@ module TrustedSandbox
       "#<TrustedSandbox::UidPool used: #{used}, available: #{available}, used_uids: #{used_uids}>"
     end
 
+    # Locks one UID from the pool, in a cross-process atomic manner
     # @return [Integer]
+    # @raise [PoolTimeoutError] if no ID is available after retries
     def lock
       retries.times do
         atomically(timeout) do
@@ -74,7 +76,9 @@ module TrustedSandbox
       self
     end
 
+    # Releases one UID
     # @param uid [Integer]
+    # @return [Integer] UID removed
     def release(uid)
       atomically(timeout) do
         release_uid uid
