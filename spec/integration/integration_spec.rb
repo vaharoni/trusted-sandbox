@@ -38,15 +38,15 @@ describe 'integration testing' do
   describe 'memory limit' do
     it 'raises error when limited' do
       response = TrustedSandbox.with_options(memory_limit: 50_000_000) do |s|
-        s.run_code('x = "*" * 50_000_000; nil')
+        s.run_code('x = "*" * 50_000_000')
       end
       response.valid?.should == false
       response.stderr.should == ["Killed\n"]
     end
 
     it 'works when not limited' do
-      response = TrustedSandbox.with_options(memory_limit: 100_000_000) do |s|
-        s.run_code('x = "*" * 50_000_000; nil')
+      response = TrustedSandbox.with_options(memory_limit: 150_000_000) do |s|
+        s.run_code('x = "*" * 50_000_000')
       end
       response.stderr.should be_empty
       response.stdout.should be_empty
