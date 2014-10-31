@@ -30,18 +30,29 @@ module TrustedSandbox
       `docker run -it -v #{local_code_dir}:/home/sandbox/src --entrypoint="/bin/bash" #{TrustedSandbox.config.docker_image_name} -s`
     end
 
-    desc 'generate_image VERSION', 'Creates the Docker image files and places them into the `trusted_sandbox_images` directory. Default version is 2.1.2'
-    def generate_image(image_version = '2.1.2')
+    desc 'generate_image IMAGE_NAME', 'Creates the Docker image files and places them into the `trusted_sandbox_images` directory. Default name is ruby-2.1.2'
+    def generate_image(image_name = 'ruby-2.1.2')
       target_dir = 'trusted_sandbox_images'
-      target_image_path = "#{target_dir}/#{image_version}"
-      gem_image_path = File.expand_path("../server_images/#{image_version}", __FILE__)
+      target_image_path = "#{target_dir}/#{image_name}"
+      gem_image_path = File.expand_path("../server_images/#{image_name}", __FILE__)
 
-      puts "Image #{image_version} does not exist" unless Dir.exist?(gem_image_path)
+      puts "Image #{image_name} does not exist" unless Dir.exist?(gem_image_path)
       puts "Directory #{target_image_path} already exists" or return if Dir.exist?(target_image_path)
 
-      puts "Copying #{image_version} into #{target_image_path}"
+      puts "Copying #{image_name} into #{target_image_path}"
       FileUtils.mkdir_p target_dir
       FileUtils.cp_r gem_image_path, target_image_path
+    end
+
+    desc 'generate_images', 'Copies all Docker images files into `trusted_sandbox_images` directory'
+    def generate_images
+      target_dir = 'trusted_sandbox_images'
+      source_dir = File.expand_path("../server_images", __FILE__)
+
+      puts "Directory #{target_dir} already exists" or return if Dir.exist?(target_dir)
+      puts "Copying images into #{target_dir}"
+
+      FileUtils.cp_r source_dir, target_dir
     end
 
     desc 'set_quotas QUOTA_KB', 'Sets the quota for all the UIDs in the pool. This requires additional installation. Refer to the README file.'
