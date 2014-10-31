@@ -53,7 +53,6 @@ module TrustedSandbox
 
     def create_code_dir
       if config.keep_code_folders
-
         puts "Creating #{code_dir_path}"
         puts nil
         puts 'To launch and ssh into a new docker container with this directory mounted, run:'

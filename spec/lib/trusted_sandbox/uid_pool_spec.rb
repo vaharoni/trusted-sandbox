@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe TrustedSandbox::UidPool do
   before do
-    @tmp_dir = 'tmp/uid_pool/test'
+    @tmp_dir = 'tmp/test/uid_pool'
     FileUtils.rm_rf @tmp_dir
     FileUtils.mkdir_p @tmp_dir
     @class = TrustedSandbox::UidPool

@@ -14,10 +14,14 @@ module TrustedSandbox
       parse_output_file
     end
 
+    # @return [Boolean]
     def valid?
       status == 'success'
     end
 
+    # @return [Object] the output returned by the container. Raises errors if encountered.
+    # @raise [ContainerError, UserCodeError, InternalError] if errors were raised by the container, they are bubbled
+    #   as UserCodeError
     def output!
       propagate_errors!
       output
