@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = TrustedSandbox::VERSION
   spec.authors       = ['Amit Aharoni']
   spec.email         = ['amit.sites@gmail.com']
-  spec.description   = %q{Trusted Sandbox makes it simple to execute Ruby classes that eval untrusted code in a resource-controlled docker container}
-  spec.summary       = %q{Run untrusted Ruby code in a contained sandbox using Docker}
+  spec.description   = %q{Trusted Sandbox makes it simple to execute classes that eval untrusted code in a resource-controlled docker container}
+  spec.summary       = %q{Run untrusted code in a contained sandbox using Docker}
   spec.homepage      = 'https://github.com/vaharoni/trusted-sandbox'
   spec.license       = 'MIT'
 

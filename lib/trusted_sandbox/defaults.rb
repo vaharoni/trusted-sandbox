@@ -3,7 +3,7 @@ module TrustedSandbox
 
     def initialize
       self.docker_options = {}
-      self.docker_image_name = 'vaharoni/trusted_sandbox:2.1.2.v1'
+      self.docker_image_name = 'vaharoni/trusted_sandbox:ruby-2.1.2.v1'
       self.memory_limit = 50 * 1024 * 1024
       self.memory_swap_limit = 50 * 1024 * 1024
       self.cpu_shares = 1

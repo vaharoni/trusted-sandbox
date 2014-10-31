@@ -1,10 +1,10 @@
 # Trusted Sandbox
 
-Run untrusted ruby code in a contained sandbox, using Docker. This gem was inspired by [Harry Marr's work][1].
+Run untrusted code in a contained sandbox, using Docker. This gem was inspired by [Harry Marr's work][1].
 
 ## Instant gratification
 
-Trusted Sandbox makes it simple to execute Ruby classes that `eval` untrusted code in a resource-controlled docker
+Trusted Sandbox makes it simple to execute classes that `eval` untrusted code in a resource-controlled docker
 container.
 
 The simplest way to get started is run "inline" code within a container:
@@ -107,7 +107,7 @@ $ trusted_sandbox test
 Install the image. This step is optional, as Docker automatically installs images when you first run them. However,
 since it takes a few minutes we suggest you do this in advance.
 ```
-$ docker run --rm vaharoni/trusted_sandbox:2.1.2.v1
+$ docker run --rm vaharoni/trusted_sandbox:ruby-2.1.2.v1
 ```
 If you see the message "you must provide a uid", then you are set.
 
@@ -148,7 +148,7 @@ YAML file which will override any configuration and passed through to `Docker.op
 
 In addition, these docker-related configuration parameters can be used:
 ```ruby
-docker_image_name: vaharoni/trusted_sandbox:2.1.2.v1
+docker_image_name: vaharoni/trusted_sandbox:ruby-2.1.2.v1
 
 # Optional authentication
 docker_login:
@@ -420,20 +420,23 @@ You should not override user quota related parameters, as they must be prepared 
 ## Using custom docker images
 
 Trusted Sandbox comes with one ready-to-use image that includes Ruby 2.1.2. It is hosted on Docker Hub under
-`vaharoni/trusted_sandbox:2.1.2.v1`.
+`vaharoni/trusted_sandbox:ruby-2.1.2.v1`.
+
+We are actively looking for contributors who are willing to help expand the library of Docker images to support other
+languages and environments.
 
 To use a different image from your Docker Hub account simply change the configuration parameters in the YAML file.
 
 To customize the provided images, run the following. It will copy the image definition to your current directory under
-`trusted_sandbox_images/2.1.2`.
+`trusted_sandbox_images/ruby-2.1.2`.
 ```
 $ trusted_sandbox generate_image
 ```
 
 After modifying the files to your satisfaction, you can either push it to your Docker Hub account, or build directly
-on the server. Assuming you kept the image under trusted_sandbox_images/2.1.2:
+on the server. Assuming you kept the image under trusted_sandbox_images/ruby-2.1.2:
 ```
-$ docker build -t "your_user/your_image_name:your_image_version" trusted_sandbox_images/2.1.2
+$ docker build -t "your_user/your_image_name:your_image_version" trusted_sandbox_images/ruby-2.1.2
 ```
 
 ## Troubleshooting
