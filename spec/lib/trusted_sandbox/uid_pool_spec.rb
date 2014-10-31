@@ -45,7 +45,7 @@ describe TrustedSandbox::UidPool do
     describe '#lock' do
       context 'There are still available IDs' do
         it 'gives the UIDs' do
-          [@subject.lock, @subject.lock, @subject.lock].should == [1, 2, 3]
+          [@subject.lock, @subject.lock, @subject.lock].sort.should == [1, 2, 3]
         end
       end
 
@@ -68,21 +68,21 @@ describe TrustedSandbox::UidPool do
       it 'sets the right available and used' do
         @subject.available.should == 2
         @subject.used.should == 1
-        @subject.available_uids.should == [2,3]
+        @subject.available_uids.sort.should == [2,3]
         @subject.used_uids.should == [1]
       end
       it 'releases the right uid' do
         @subject.release @uid
         @subject.available.should == 3
         @subject.used.should == 0
-        @subject.available_uids.should == [1,2,3]
+        @subject.available_uids.sort.should == [1,2,3]
         @subject.used_uids.should == []
       end
       it 'does not release the wrong uid' do
         @subject.release @uid + 1
         @subject.available.should == 2
         @subject.used.should == 1
-        @subject.available_uids.should == [2,3]
+        @subject.available_uids.sort.should == [2,3]
         @subject.used_uids.should == [1]
       end
     end
@@ -96,13 +96,13 @@ describe TrustedSandbox::UidPool do
         @subject.available.should == 0
         @subject.used.should == 3
         @subject.available_uids.should == []
-        @subject.used_uids.should == [1,2,3]
+        @subject.used_uids.sort.should == [1,2,3]
       end
       it 'works' do
         @subject.release_all
         @subject.available.should == 3
         @subject.used.should == 0
-        @subject.available_uids.should == [1,2,3]
+        @subject.available_uids.sort.should == [1,2,3]
         @subject.used_uids.should == []
       end
     end
