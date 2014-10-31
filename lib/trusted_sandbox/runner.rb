@@ -96,6 +96,7 @@ module TrustedSandbox
       end
       response = TrustedSandbox::Response.new stdout, stderr, code_dir_path, config.container_output_filename
       response.parse!
+      response
     rescue Timeout::Error => e
       logs = @container.logs(stdout: true, stderr: true)
       TrustedSandbox::Response.timeout_error(e, logs)

@@ -12,7 +12,7 @@ describe TrustedSandbox::Response do
   context 'no error' do
     before do
       File.binwrite @file_path, Marshal.dump(status: 'success', output: 'hi')
-      @subject = TrustedSandbox::Response.new(@tmp_path, @file_name, 'stdout', 'stderr')
+      @subject = TrustedSandbox::Response.new('stdout', 'stderr', @tmp_path, @file_name)
     end
 
     it 'instantiates correctly' do
@@ -36,7 +36,7 @@ describe TrustedSandbox::Response do
     before do
       @err = 1 / 0 rescue $!
       File.binwrite @file_path, Marshal.dump(status: 'error', error: @err)
-      @subject = TrustedSandbox::Response.new(@tmp_path, @file_name, nil, nil)
+      @subject = TrustedSandbox::Response.new(nil, nil, @tmp_path, @file_name)
     end
 
     it 'initializes with an error' do
