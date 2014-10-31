@@ -28,6 +28,8 @@ module TrustedSandbox
 
       self.keep_code_folders = false
       self.keep_containers = false
+
+      self.quiet_mode = false
     end
 
   end

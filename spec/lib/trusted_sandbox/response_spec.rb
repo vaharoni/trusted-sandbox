@@ -13,6 +13,7 @@ describe TrustedSandbox::Response do
     before do
       File.binwrite @file_path, Marshal.dump(status: 'success', output: 'hi')
       @subject = TrustedSandbox::Response.new('stdout', 'stderr', @tmp_path, @file_name)
+      @subject.parse!
     end
 
     it 'instantiates correctly' do
@@ -37,6 +38,7 @@ describe TrustedSandbox::Response do
       @err = 1 / 0 rescue $!
       File.binwrite @file_path, Marshal.dump(status: 'error', error: @err)
       @subject = TrustedSandbox::Response.new(nil, nil, @tmp_path, @file_name)
+      @subject.parse!
     end
 
     it 'initializes with an error' do
@@ -54,7 +56,8 @@ describe TrustedSandbox::Response do
     before do
       @err = 1 / 0 rescue $!
       File.binwrite @file_path, Marshal.dump(status: 'unexpected', output: 'hi', error: @err)
-      @subject = TrustedSandbox::Response.new(@tmp_path, @file_name, nil, nil)
+      @subject = TrustedSandbox::Response.new(nil, nil, @tmp_path, @file_name)
+      @subject.parse!
     end
 
     it 'initializes with an error' do
@@ -70,7 +73,8 @@ describe TrustedSandbox::Response do
 
   context 'file is missing' do
     before do
-      @subject = TrustedSandbox::Response.new(@tmp_path, @file_name, nil, nil)
+      @subject = TrustedSandbox::Response.new(nil, nil, @tmp_path, @file_name)
+      @subject.parse!
     end
 
     it 'initializes with an error' do

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe TrustedSandbox::Runner do
 
   before do
-    @defaults = TrustedSandbox::Defaults.send(:new)
+    @defaults = TrustedSandbox::Defaults.send(:new).override(quiet_mode: true)
     @uid_pool = Object.new
   end
 

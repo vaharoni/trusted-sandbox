@@ -28,6 +28,10 @@ development:
   keep_code_folders:            false
   keep_containers:              false
 
+  # When this is set to false and keep_code_folders is true, you'll
+  # receive helpful messages about how to connect to your containers
+  quiet_mode:                   false
+
   # # It's very unlikely you'll need to change these
   #  pool_size:                    5000
   #  pool_min_uid:                 20000
