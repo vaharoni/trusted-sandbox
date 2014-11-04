@@ -1,12 +1,16 @@
 begin
   require 'active_support'
+  require 'yaml'
 
+  manifest_file_path = '/home/sandbox/src/manifest'
   input_file_path = '/home/sandbox/src/input'
   output_file_path = '/home/sandbox/src/output'
 
+  manifest = YAML.load_file(manifest_file_path)
+  manifest.each {|f| require_relative "src/#{f}"}
+
   data = File.binread(input_file_path)
-  klass_name, file_name, args = Marshal.load(data)
-  require File.join('/home/sandbox/src', file_name)
+  klass_name, args = Marshal.load(data)
   klass = ActiveSupport::Inflector.constantize klass_name
 
   obj = klass.new(*args)

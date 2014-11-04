@@ -9,7 +9,7 @@ development:
   # docker_url:                   https://192.168.59.103:2376
   # docker_cert_path:             ~/.boot2docker/certs/boot2docker-vm
 
-  docker_image_name:            vaharoni/trusted_sandbox:ruby-2.1.2.v1
+  docker_image_name:            vaharoni/trusted_sandbox:ruby-2.1.2.v2
 
   cpu_shares:                   1
 

@@ -80,7 +80,7 @@ module TrustedSandbox
     end
 
     def serialize_request(klass, *args)
-      serializer = RequestSerializer.new(code_dir_path, config.container_input_filename)
+      serializer = RequestSerializer.new(code_dir_path, config.container_manifest_filename, config.container_input_filename)
       serializer.serialize(klass, *args)
     end
 

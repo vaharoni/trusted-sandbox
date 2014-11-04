@@ -73,5 +73,11 @@ module TrustedSandbox
         TrustedSandbox.uid_pool.release_all
       end
     end
+
+    desc 'ssh UID', 'Shows how to run a container with the current configuration settings. If UID is provided, it includes mounting instructions.'
+    def ssh(uid=nil)
+      uid_string = uid ? "-v #{File.join(TrustedSandbox.config.host_code_root_path, uid)}:/home/sandbox/src" : nil
+      puts %{docker run -it #{uid_string} --entrypoint="/bin/bash" #{TrustedSandbox.config.docker_image_name} -s}
+    end
   end
 end

@@ -107,7 +107,7 @@ $ trusted_sandbox test
 Install the image. This step is optional, as Docker automatically installs images when you first run them. However,
 since it takes a few minutes we suggest you do this in advance.
 ```
-$ docker run --rm vaharoni/trusted_sandbox:ruby-2.1.2.v1
+$ docker run --rm vaharoni/trusted_sandbox:ruby-2.1.2.v2
 ```
 If you see the message "you must provide a uid", then you are set.
 
@@ -148,7 +148,7 @@ YAML file which will override any configuration and passed through to `Docker.op
 
 In addition, these docker-related configuration parameters can be used:
 ```ruby
-docker_image_name: vaharoni/trusted_sandbox:ruby-2.1.2.v1
+docker_image_name: vaharoni/trusted_sandbox:ruby-2.1.2.v2
 
 # Optional authentication
 docker_login:
@@ -420,7 +420,7 @@ You should not override user quota related parameters, as they must be prepared 
 ## Using custom docker images
 
 Trusted Sandbox comes with one ready-to-use image that includes Ruby 2.1.2. It is hosted on Docker Hub under
-`vaharoni/trusted_sandbox:ruby-2.1.2.v1`.
+`vaharoni/trusted_sandbox:ruby-2.1.2.v2`.
 
 We are actively looking for contributors who are willing to help expand the library of Docker images to support other
 languages and environments.
