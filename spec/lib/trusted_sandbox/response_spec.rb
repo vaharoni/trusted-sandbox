@@ -64,9 +64,9 @@ describe TrustedSandbox::Response do
       @subject.raw_response.should == {status: 'unexpected', output: 'hi', error: @err}
       @subject.status.should == 'error'
       @subject.output.should == nil
-      @subject.error.is_a?(TrustedSandbox::ContainerError).should == true
-      @subject.error_to_raise.is_a?(TrustedSandbox::ContainerError).should == true
-      expect {@subject.output!}.to raise_error(TrustedSandbox::ContainerError)
+      @subject.error.is_a?(TrustedSandbox::InternalError).should == true
+      @subject.error_to_raise.is_a?(TrustedSandbox::InternalError).should == true
+      expect {@subject.output!}.to raise_error(TrustedSandbox::InternalError)
       @subject.valid?.should == false
     end
   end
@@ -81,7 +81,7 @@ describe TrustedSandbox::Response do
       @subject.raw_response.should == nil
       @subject.status.should == 'error'
       @subject.output.should == nil
-      @subject.error.is_a?(Errno::ENOENT).should == true
+      @subject.error.is_a?(TrustedSandbox::ContainerError).should == true
       @subject.error_to_raise.is_a?(TrustedSandbox::ContainerError).should == true
       expect {@subject.output!}.to raise_error(TrustedSandbox::ContainerError)
       @subject.valid?.should == false
