@@ -42,6 +42,13 @@ module TrustedSandbox
     # Parses the output file and stores the values in the appropriate ivars
     # @return [nil]
     def parse!
+      unless File.exists? output_file_path
+        @status = 'error'
+        @error = ContainerError.new('User code did not finish properly')
+        @error_to_raise = @error
+        return
+      end
+
       begin
         data = File.binread output_file_path
         @raw_response = Marshal.load(data)
@@ -54,7 +61,7 @@ module TrustedSandbox
 
       unless ['success', 'error'].include? @raw_response[:status]
         @status = 'error'
-        @error = ContainerError.new('Output file has invalid format')
+        @error = InternalError.new('Output file has invalid format')
         @error_to_raise = @error
         return
       end
