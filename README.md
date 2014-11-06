@@ -274,7 +274,7 @@ You should see something like this:
 
 To actually set the quotas, run the following (quota is in KB):
 ```
-$ sudo trusted_sandbox set_quotas 10000
+$ trusted_sandbox set_quotas 10000
 ```
 This sets ~10MB quota on all UIDs that are in the range defined by `pool_size` and `pool_min_uid` parameters. If you
 change these configuration parameters you must rerun the `set_quotas` command.

@@ -61,7 +61,7 @@ module TrustedSandbox
       to = TrustedSandbox.config.pool_max_uid
       puts "Configuring quota for UIDs [#{from}..#{to}]"
       (from..to).each do |uid|
-        `setquota -u #{uid} 0 #{quota_kb} 0 0 /`
+        `sudo setquota -u #{uid} 0 #{quota_kb} 0 0 /`
       end
     end
 
