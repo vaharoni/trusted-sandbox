@@ -82,4 +82,48 @@ describe 'integration testing' do
       response.error_to_raise.is_a?(TrustedSandbox::ExecutionTimeoutError).should == true
     end
   end
+
+  describe 'shortcut used' do
+    before do
+      dont_allow(Docker::Container).create
+    end
+    context 'no issue' do
+      it 'works' do
+        TrustedSandbox.with_options(shortcut: true) do |s|
+          s.run_code!('input[:x] ** 2', input: {x: 10}).should == 100
+        end
+
+        response = TrustedSandbox.with_options(shortcut: true) do |s|
+          s.run_code('puts "hi"; input[:x] ** 2', input: {x: 10})
+        end
+        response.valid?.should == true
+        response.output.should == 100
+        response.stdout.should == ["hi\n"]
+      end
+    end
+
+    context 'timeout' do
+      it 'raises error' do
+        response = TrustedSandbox.with_options(shortcut: true, execution_timeout: 1) do |s|
+          s.run_code('puts "hi"; while true; end')
+        end
+        response.valid?.should == false
+        response.error.is_a?(Timeout::Error).should == true
+        response.error_to_raise.is_a?(TrustedSandbox::ExecutionTimeoutError).should == true
+      end
+    end
+
+    context 'user error' do
+      it 'raises error' do
+        expect {TrustedSandbox.with_options(shortcut: true) {|s| s.run_code!('asfsadf')}}.to raise_error(TrustedSandbox::UserCodeError)
+
+        response = TrustedSandbox.with_options(shortcut: true) {|s| s.run_code('asfsadf') }
+        response.valid?.should == false
+        response.output.should == nil
+        response.status.should == 'error'
+        response.error.is_a?(NameError).should == true
+        response.error_to_raise.is_a?(TrustedSandbox::UserCodeError).should == true
+      end
+    end
+  end
 end

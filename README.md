@@ -207,6 +207,11 @@ keep_containers: false
 
 # A folder used by the UID-pool to handle locks.
 host_uid_pool_lock_path: tmp/uid_pool_lock
+
+# When set to true the code is executed within the current process, without launching a
+# Docker container. This is useful for testing and on dev machines that do not have Docker
+# installed.
+shortcut: false
 ```
 
 ### Limiting swap memory
@@ -348,7 +353,9 @@ possible. You can prepare a docker image with additional gems and custom Ruby cl
 
 ### Running containers
 
-There are two ways to run a container. Use `run!` to retrieve output from the container. If the user code raised
+There are two main methods to run a container.
+
+Use `run!` to retrieve output from the container. If the user code raised
 an exception, it will be raised by `run!`.
 
 ```ruby
@@ -358,6 +365,25 @@ output = TrustedSandbox.run! MyFunction, "input ** 2", 10
 Use `run` to retrieve a response object. The response object provides additional useful information about the
 container execution.
 
+Here is a success scenario:
+```ruby
+response = TrustedSandbox.run MyFunction, "input ** 2", 10
+
+response.status
+# => "success"
+
+response.valid?
+# => true
+
+response.output
+# => 100
+
+response.output!
+# => 100
+
+response.error
+# => nil
+```
 Here is an error scenario:
 ```ruby
 response = TrustedSandbox.run MyFunction, "raise 'error!'", 10
@@ -388,25 +414,20 @@ puts response.stdout
 # Can be useful for environment related errors
 puts response.stderr
 ```
-Here is a success scenario:
+
+The helper methods `run_code` and `run_code!` behave similarly to `run` and `run!`. They invoke TrustedSandbox
+on a `GeneralPurpose` class that performs a simple `eval`, with an ability to provide a context for the code to run in.
+The following:
 ```ruby
-response = TrustedSandbox.run MyFunction, "input ** 2", 10
-
-response.status
-# => "success"
-
-response.valid?
-# => true
-
-response.output
-# => 100
-
-response.output!
-# => 100
-
-response.error
-# => nil
+TrustedSandbox.run_code! "input[:a] + input[:b]", input: {a: 1, b: 2}
+# => 3
 ```
+Is equivalent to running:
+```ruby
+TrustedSandbox.run! TrustedSandbox::GeneralPurpose, "input[:a] + input[:b]", input: {a: 1, b: 2}
+# => 3
+```
+
 ### Overriding specific invocations
 
 To override a configuration parameter for a specific invocation, use `with_options`:

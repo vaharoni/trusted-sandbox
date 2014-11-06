@@ -28,6 +28,11 @@ development:
   keep_code_folders:            false
   keep_containers:              false
 
+  # When set to true, code will run in the current process instead of
+  # a docker container. This is useful for testing and dev machines
+  # that do not have docker installed
+  shortcut:                     false
+
   # When this is set to false and keep_code_folders is true, you'll
   # receive helpful messages about how to connect to your containers
   quiet_mode:                   false

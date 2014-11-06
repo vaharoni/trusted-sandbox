@@ -9,19 +9,39 @@ module TrustedSandbox
     # @param host_code_dir_path [String] path to the folder where the argument value needs to be stored
     # @param output_file_name [String] name of output file inside the host_code_dir_path
     def initialize(stdout = nil, stderr = nil, host_code_dir_path = nil, output_file_name = nil)
-      @stdout = stdout
-      @stderr = stderr
+      @stdout = [stdout].flatten.compact
+      @stderr = [stderr].flatten.compact
       @host_code_dir_path = host_code_dir_path
       @output_file_name = output_file_name
     end
 
-    # @return [Response] object initialized with timeout error details
-    def self.timeout_error(err, logs)
-      obj = new(logs)
+    # = Alternative initializers
+
+    # @param error [StandardError] error object that was raised during execution of the code
+    # @param error_to_raise [Class] an error class in the TrustedSandbox module.
+    # @param stdout [String]
+    # @param stderr [String]
+    # @return [Response] object initialized with error details
+    def self.error(error, error_to_raise, stdout = nil, stderr = nil)
+      obj = new(stdout, stderr)
       obj.instance_eval do
         @status = 'error'
-        @error = err
-        @error_to_raise = TrustedSandbox::ExecutionTimeoutError.new(err)
+        @error = error
+        @error_to_raise = error_to_raise.new(error)
+      end
+      obj
+    end
+
+    # This is used when user decides not to go through docker
+    # @param output [Object] the result of the code execution
+    # @param stdout [String]
+    # @param stderr [String]
+    # @return [Response] object initialized with output
+    def self.shortcut(output, stdout = nil, stderr = nil)
+      obj = new(stdout, stderr)
+      obj.instance_eval do
+        @status = 'success'
+        @output = output
       end
       obj
     end

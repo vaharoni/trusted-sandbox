@@ -19,8 +19,8 @@ describe TrustedSandbox::Response do
     it 'instantiates correctly' do
       @subject.host_code_dir_path.should == @tmp_path
       @subject.output_file_name.should == @file_name
-      @subject.stdout.should == 'stdout'
-      @subject.stderr.should == 'stderr'
+      @subject.stdout.should == ['stdout']
+      @subject.stderr.should == ['stderr']
     end
 
     it 'parses the file correctly' do

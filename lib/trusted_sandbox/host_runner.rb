@@ -1,5 +1,5 @@
 module TrustedSandbox
-  class Runner
+  class HostRunner
 
     attr_reader :uid_pool, :config
 
@@ -15,14 +15,11 @@ module TrustedSandbox
     # @param *args [Array] arguments to send to klass#initialize
     # @return [Response]
     def run(klass, *args)
-      create_code_dir
-      serialize_request(klass, *args)
-      create_container
-      start_container
-    ensure
-      release_uid
-      remove_code_dir
-      remove_container
+      if config.shortcut
+        shortcut(klass, *args)
+      else
+        run_in_container(klass, *args)
+      end
     end
 
     # @param klass [Class] the class object that should be run
@@ -49,6 +46,17 @@ module TrustedSandbox
     end
 
     private
+
+    def run_in_container(klass, *args)
+      create_code_dir
+      serialize_request(klass, *args)
+      create_container
+      start_container
+    ensure
+      release_uid
+      remove_code_dir
+      remove_container
+    end
 
     def obtain_uid
       @uid ||= uid_pool.lock
@@ -99,7 +107,26 @@ module TrustedSandbox
       response
     rescue Timeout::Error => e
       logs = @container.logs(stdout: true, stderr: true)
-      TrustedSandbox::Response.timeout_error(e, logs)
+      TrustedSandbox::Response.error(e, TrustedSandbox::ExecutionTimeoutError, logs)
+    end
+
+    # @return [TrustedSandbox::Response]
+    def shortcut(klass, *args)
+      output, stdout, stderr = Timeout.timeout(config.execution_timeout) do
+        begin
+          $stdout = StringIO.new
+          $stderr = StringIO.new
+          [klass.new(*args).run, $stdout.string, $stderr.string]
+        ensure
+          $stdout = STDOUT
+          $stderr = STDERR
+        end
+      end
+      TrustedSandbox::Response.shortcut output, stdout, stderr
+    rescue Timeout::Error => e
+      TrustedSandbox::Response.error(e, TrustedSandbox::ExecutionTimeoutError, stdout, stderr)
+    rescue => e
+      TrustedSandbox::Response.error(e, TrustedSandbox::UserCodeError, stdout, stderr)
     end
 
     def remove_container

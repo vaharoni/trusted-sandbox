@@ -49,7 +49,8 @@ module TrustedSandbox
                                 :memory_limit, :memory_swap_limit, :cpu_shares, :docker_image_name,
                                 :execution_timeout, :network_access, :enable_swap_limit, :enable_quotas,
                                 :container_code_path, :container_input_filename, :container_output_filename,
-                                :keep_code_folders, :keep_containers, :quiet_mode, :container_manifest_filename
+                                :keep_code_folders, :keep_containers, :quiet_mode, :container_manifest_filename,
+                                :shortcut
 
     attr_reader_with_fallback :host_code_root_path, :host_uid_pool_lock_path
 

@@ -31,6 +31,7 @@ module TrustedSandbox
       self.keep_containers = false
 
       self.quiet_mode = false
+      self.shortcut = false
     end
 
   end
