@@ -23,6 +23,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rr'
 
-  spec.add_runtime_dependency 'docker-api', '~> 1.13'
+  spec.add_runtime_dependency 'docker-api', '~> 1.17'
   spec.add_runtime_dependency 'thor', '~> 0.19'
 end
