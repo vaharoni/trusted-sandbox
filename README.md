@@ -77,12 +77,13 @@ an earlier version. Refer to the Docker documentation to see how to install the 
 
 Note that on a Linux server the docker daemon runs as root, and the root user owns the socket used to connect to the
 daemon. In order to avoid the need to run your application with sudo privileges, add the application user to the
-`docker` group (keep `${USER}` for the connected user or change to suit your needs):
+`docker` group:
 ```
+# keep `${USER}` for the connected user or change to suit your needs
 $ sudo gpasswd -a ${USER} docker
 $ sudo service docker.io restart
 ```
-then reconnect to your shell session and try the following (without sudo):
+then reconnect to shell session and try the following (without sudo):
 ```
 $ docker images
 ```
@@ -135,6 +136,8 @@ environment variables.
 
 Trusted Sandbox uses the `docker-api` gem to communicate with docker. `docker-api`'s defaults work quite well for a
 Linux host, and you should be good by omitting `docker_url` and `docker_cert_path` all together.
+
+The following configurations work for a Mac OS host:
 
 ```ruby
 # If omitted ENV['DOCKER_HOST'] is used. If it is not set, docker-api defaults are used.
@@ -442,9 +445,6 @@ You should not override user quota related parameters, as they must be prepared 
 
 Trusted Sandbox comes with one ready-to-use image that includes Ruby 2.1.2. It is hosted on Docker Hub under
 `vaharoni/trusted_sandbox:ruby-2.1.2.v2`.
-
-We are actively looking for contributors who are willing to help expand the library of Docker images to support other
-languages and environments.
 
 To use a different image from your Docker Hub account simply change the configuration parameters in the YAML file.
 
