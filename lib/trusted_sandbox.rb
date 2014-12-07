@@ -33,7 +33,7 @@ module TrustedSandbox
     return {} unless yaml_path
 
     env ||= ENV['TRUSTED_SANDBOX_ENV'] || ENV['RAILS_ENV'] || 'development'
-    YAML.load_file(yaml_path)[env]
+    YAML.load_file(yaml_path)[env] || {}
   end
 
   def self.uid_pool
